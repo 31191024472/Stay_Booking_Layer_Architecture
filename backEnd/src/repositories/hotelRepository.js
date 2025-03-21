@@ -1,4 +1,5 @@
 import Hotel from '../models/Hotel.js';
+import popularDestinations from "../models/PopularDestination.js"
 
 const findAllHotels = async () => {
     return await Hotel.find();
@@ -20,10 +21,24 @@ const deleteHotel = async (hotelCode) => {
     return await Hotel.findOneAndDelete({ hotelCode });
 };
 
+const getPopularDestinations = async () => {
+    return await popularDestinations.find();
+};
+
+const getNearbyHotels = async () => {
+    return await Hotel.find(city ? { city } : {});
+};
+
+const getAvailableCities = async () => {
+    return await Hotel.distinct("city");
+};
 export default {
     findAllHotels,
     findHotelByCode,
     createHotel,
     updateHotel,
-    deleteHotel
+    deleteHotel,
+    getPopularDestinations,
+    getNearbyHotels,
+    getAvailableCities
 };

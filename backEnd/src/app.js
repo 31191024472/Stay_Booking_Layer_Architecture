@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from "cors";
 import userRoutes from './routes/userRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
@@ -22,6 +24,14 @@ app.use(cors({
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+// Lấy đường dẫn tuyệt đối của thư mục hiện tại (vì ES Module không có __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Cấu hình để phục vụ ảnh tĩnh từ thư mục public
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 
 // API Routes
 app.use("/api/users", userRoutes);

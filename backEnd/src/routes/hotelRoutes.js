@@ -1,8 +1,12 @@
 import express from 'express';
-import { getHotels, getHotelByCode, createHotel, updateHotel, deleteHotel } from '../controllers/hotelController.js';
+import { getHotels, getHotelByCode, createHotel, updateHotel, deleteHotel,getPopularDestinations,getNearbyHotels, getAvailableCities} 
+from '../controllers/hotelController.js';
 
 const router = express.Router();
 
+router.get('/popularDestinations', getPopularDestinations);
+router.get('/nearbyHotels', getNearbyHotels);
+router.get('/availableCities', getAvailableCities);
 router.get('/', getHotels);
 router.get('/:hotelCode', getHotelByCode);
 router.post('/', createHotel);

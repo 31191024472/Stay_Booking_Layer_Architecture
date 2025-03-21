@@ -20,10 +20,24 @@ const removeHotel = async (hotelCode) => {
     return await hotelRepository.deleteHotel(hotelCode);
 };
 
+const fetchPopularDestinations = async () => {
+    return await hotelRepository.getPopularDestinations();
+};
+
+const fetchNearbyHotels = async (latitude, longitude) => {
+    return await hotelRepository.getNearbyHotels(latitude, longitude);
+};
+
+const fetchAvailableCities = async () => {
+    return await hotelRepository.getAvailableCities();
+};
 export default {
     getAllHotels,
     getHotelByCode,
     addHotel,
     editHotel,
-    removeHotel
+    removeHotel,
+    fetchPopularDestinations,
+    fetchNearbyHotels,
+    fetchAvailableCities
 };
