@@ -32,5 +32,13 @@ const updateProfile = async (email, updateData) => {
   return await userRepository.updateUser(email, updateData);
 };
 
-
-export default { register, login, updateProfile };
+const getAuthUser = async (userId) => {
+  try {
+      const user = await userRepository.findById(userId);
+      return user;
+  } catch (error) {
+      console.error("🚨 Lỗi trong getAuthUser:", error);
+      throw new Error("Lỗi khi lấy thông tin người dùng");
+  }
+};
+export default { register, login, updateProfile, getAuthUser };

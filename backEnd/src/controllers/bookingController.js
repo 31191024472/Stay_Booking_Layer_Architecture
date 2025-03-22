@@ -1,4 +1,4 @@
-import bookingService  from "../models/Booking.js";
+import bookingService  from "../services/bookingServices.js";
 
 export const createBooking = async (req, res) => {
   try {
@@ -15,9 +15,11 @@ export const createBooking = async (req, res) => {
 
 export const getUserBookings = async (req, res) => {
   try {
-    const bookings = await bookingService.getUserBookings(req.user._id);
+    const bookings = await bookingService.getUserBookings();
+    console.log(bookings)
     res.json({ success: true, bookings });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 }; 
+

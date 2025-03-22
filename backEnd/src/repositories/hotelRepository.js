@@ -32,6 +32,16 @@ const getNearbyHotels = async () => {
 const getAvailableCities = async () => {
     return await Hotel.distinct("city");
 };
+
+const getDistinctRatings = async () => {
+    return await Hotel.distinct("ratings");
+  };
+  
+const getDistinctPropertyTypes = async () => {
+    return await Hotel.distinct("title");
+  };
+
+
 export default {
     findAllHotels,
     findHotelByCode,
@@ -40,5 +50,8 @@ export default {
     deleteHotel,
     getPopularDestinations,
     getNearbyHotels,
-    getAvailableCities
+    getAvailableCities,
+    getDistinctRatings,
+    getDistinctPropertyTypes
+
 };

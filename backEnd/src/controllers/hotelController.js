@@ -126,3 +126,17 @@ export const getAvailableCities = async (req, res) => {
         res.status(500).json({ success: false, message: "Server error", error });
     }
 };
+
+export const getHotelFilters = async (req, res) => {
+    try {
+        const filters = await hotelServices.getFilters();
+        res.status(200).json(filters);
+      } catch (error) {
+        console.error("Lỗi khi lấy bộ lọc khách sạn:", error);
+        res.status(500).json({
+          isLoading: false,
+          data: null,
+          errors: ["Internal Server Error"],
+        });
+      }
+  };

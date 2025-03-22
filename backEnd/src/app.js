@@ -38,5 +38,5 @@ app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payment-methods", paymentRoutes);
 app.use("/api", homeRoutes);
-app.use('/api/hotels', hotelRoutes);
+app.use('/api/hotel', hotelRoutes);
 export default app;
