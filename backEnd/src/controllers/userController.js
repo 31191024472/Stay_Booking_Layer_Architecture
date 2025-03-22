@@ -87,8 +87,6 @@ export const getUserBookings = async (req, res) => {
 // ✅ Lấy phương thức thanh toán của người dùng
 export const getPayments = async (req, res) => {
   try {
-    console.log("Check user id from controler: ", req.user._id)
-
     const payments = await userServices.getUserPayments(req.user._id);
     const formattedPayments = payments.map(payment => ({
       cardType: payment.cardType,

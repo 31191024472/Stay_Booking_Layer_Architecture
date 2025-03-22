@@ -5,4 +5,4 @@ const CountrySchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
 });
 
-export default mongoose.model('cities', CountrySchema);
+export default mongoose.model('countries', CountrySchema);

@@ -7,7 +7,7 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentTroutes.js';
 import homeRoutes from './routes/homeRoutes.js';
 import hotelRoutes from "./routes/hotelRoutes.js"
-
+import miscRoutes from "./routes/miscRoutes.js"
 // Config ExpressExpress
 const app = express();
 app.use(express.json());
@@ -39,4 +39,5 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/payment-methods", paymentRoutes);
 app.use("/api", homeRoutes);
 app.use('/api/hotel', hotelRoutes);
+app.use('/api/misc', miscRoutes);
 export default app;

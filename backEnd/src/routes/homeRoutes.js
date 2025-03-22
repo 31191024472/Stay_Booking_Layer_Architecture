@@ -1,7 +1,7 @@
 import express from 'express';
 import Destination from '../models/PopularDestination.js';
 import Hotel from '../models/Hotel.js';
-import City from '../models/City.js';
+import City from '../models/Countries.js';
 
 const router = express.Router();
 
