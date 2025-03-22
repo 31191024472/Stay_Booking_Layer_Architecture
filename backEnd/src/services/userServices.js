@@ -28,10 +28,8 @@ const login = async (email, password) => {
     return token;
   };
 
-const updateProfile = async (email, updateData) => {
-  return await userRepository.updateUser(email, updateData);
-};
 
+// Xác thực tài khoản bằng token 
 const getAuthUser = async (userId) => {
   try {
       const user = await userRepository.findById(userId);
@@ -41,4 +39,20 @@ const getAuthUser = async (userId) => {
       throw new Error("Lỗi khi lấy thông tin người dùng");
   }
 };
-export default { register, login, updateProfile, getAuthUser };
+
+// ✅ Cập nhật hồ sơ người dùng
+const updateUserProfile = async (userId, updateData) => {
+  return await userRepository.updateUser(userId, updateData);
+};
+
+// ✅ Lấy danh sách đặt phòng của người dùng
+const getUserBookings = async (userId) => {
+  return await userRepository.findBookingsByUserId(userId);
+};
+
+// ✅ Lấy phương thức thanh toán của người dùng
+const getUserPayments = async (userId) => {
+  return await userRepository.getUserPaymentMethods(userId);
+};
+
+export default { register, login, getUserPayments, getAuthUser,getUserBookings, updateUserProfile };

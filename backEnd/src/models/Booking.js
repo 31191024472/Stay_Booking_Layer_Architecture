@@ -9,6 +9,9 @@ const bookingSchema = new mongoose.Schema({
   checkInDate: { type: Date, required: true },
   checkOutDate: { type: Date, required: true },
   totalFare: { type: String, required: true },
+
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+
   created_at: { type: Date, default: Date.now },
 });
 

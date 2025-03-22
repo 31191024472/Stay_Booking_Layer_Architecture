@@ -19,11 +19,9 @@ const authMiddleware = async (req, res, next) => {
       }
 
       req.user = user;
-      console.log("🔹 Request User from Middleware:", req.user);
-
       next();
   } catch (error) {
-      console.error("🚨 Lỗi trong authUser:", error);
+      console.error("🚨 Lỗi trong authUser Middleware :", error);
       res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
