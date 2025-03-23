@@ -36,7 +36,6 @@ coverage/
 # Database dump
 dump/
 *.bson
-*.json
 
 # Docker (nếu sau này có dùng)
 docker-compose.override.yml
