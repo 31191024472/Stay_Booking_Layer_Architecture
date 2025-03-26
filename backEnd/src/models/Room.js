@@ -1,14 +1,15 @@
-import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import mongoose from 'mongoose';
 
 const roomSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  hotel_id: { type: String, ref: "Hotel", required: true },
-  name: { type: String, required: true },
-  type: { type: String, enum: ["Single", "Double", "Suite", "Deluxe"], required: true },
-  price: { type: Number, required: true },
-  availability: { type: Boolean, default: true },
-  created_at: { type: Date, default: Date.now },
+  hotelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hotel', required: true }, // Tham chiếu khách sạn chứa phòng này
+  roomType: { type: String, required: true },       // Loại phòng: Deluxe, Suite, Standard
+  description: String,                              // Mô tả chi tiết về phòng
+  pricePerNight: { type: Number, required: true },  // ✅ Giá phòng mỗi đêm (quan trọng)
+  maxOccupancy: Number,                             // Số người tối đa
+  bedType: String,                                  // Loại giường: King, Queen, Twin
+  amenities: [String],                              // Danh sách tiện ích trong phòng
+  quantity: { type: Number, default: 1 },           // Tổng số lượng phòng loại này trong khách sạn
+  imageUrls: [String]                               // ✅ Mảng URL hình ảnh của phòng
 });
 
-export default mongoose.model("Room", roomSchema);
+export default mongoose.model('Room', roomSchema);

@@ -1,18 +1,22 @@
-import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  bookingId: { type: String, required: true, unique: true },
-  bookingDate: { type: Date, required: true },
-  hotelName: { type: String, required: true, trim: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },   // Người đặt
+  hotelCode: { type: Number, required: true },                                    // Khách sạn
+  roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },  // Loại phòng
+  
   checkInDate: { type: Date, required: true },
   checkOutDate: { type: Date, required: true },
-  totalFare: { type: String, required: true },
+  
+  quantity: { type: Number, default: 1 },       // Số lượng phòng đặt
+  totalPrice: { type: Number, required: true }, // Tổng tiền
 
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod' }, // Phương thức thanh toán
 
-  created_at: { type: Date, default: Date.now },
+  status: { type: String, enum: ['Pending', 'Confirmed', 'Cancelled'], default: 'Pending' }, // Trạng thái
+  source: { type: String, enum: ['web', 'app', 'reception'], default: 'web' }, // Đặt qua đâu
+  
+  createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Booking", bookingSchema, "Bookings");
+export default mongoose.model('Booking', bookingSchema);

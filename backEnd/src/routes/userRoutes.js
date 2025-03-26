@@ -8,8 +8,8 @@ router.post('/register', register); //ok
 router.post('/login', login); //ok 
 router.get('/auth-user', authMiddleware, authUser); // ok
 
-router.post("/logout", authMiddleware, logoutUser); // 
-router.patch("/update-profile", authMiddleware, updateProfile);
+router.post("/logout", authMiddleware, logoutUser); // ok
+router.patch("/update-profile", authMiddleware, updateProfile); //ok
 router.get("/bookings", authMiddleware, getUserBookings); // ok
 router.get("/payment-methods", authMiddleware, getPayments); //ok
 

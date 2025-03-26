@@ -1,16 +1,32 @@
 import express from 'express';
-import { getHotels, getHotelByCode, createHotel, updateHotel, deleteHotel,getPopularDestinations
-    ,getNearbyHotels, getAvailableCities, getHotelFilters} 
-from '../controllers/hotelController.js';
+import {
+  getHotels,
+  getHotelByCode,
+  createHotel,
+  updateHotel,
+  deleteHotel,
+  getNearbyHotels,
+  getAvailableCities,
+  getHotelFilters,
+  getPopularDestinations,
+  getHotelReview
+} from '../controllers/hotelController.js';
 
 const router = express.Router();
 
-router.get('/popularDestinations', getPopularDestinations);
+// ✅ Các API tĩnh hoặc không cần hotelCode
 router.get('/nearbyHotels', getNearbyHotels);
 router.get('/availableCities', getAvailableCities);
+router.get('/popularDestinations', getPopularDestinations);
+router.get('/verticalFilters', getHotelFilters);
 router.get('/', getHotels);
-router.get('/verticalFilters', getHotelFilters)
+
+// ✅ Các API dynamic liên quan đến hotelCode (chi tiết, review)
+// Review phải đặt trước hotelCode
+router.get('/:hotelCode/reviews', getHotelReview);
 router.get('/:hotelCode', getHotelByCode);
+
+// ✅ CRUD Hotel
 router.post('/', createHotel);
 router.put('/:hotelCode', updateHotel);
 router.delete('/:hotelCode', deleteHotel);
