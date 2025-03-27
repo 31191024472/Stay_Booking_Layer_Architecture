@@ -1,8 +1,8 @@
-import express from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js"; 
-import app from './app.js';
+import express from "express";
+import app from "./app.js";
+import connectDB from "./config/db.js";
 
 dotenv.config(); // Load biến môi trường từ .env
 
