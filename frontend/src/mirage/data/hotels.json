@@ -1,0 +1,153 @@
+[
+    {
+      "hotelCode": 71222,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/JW Marriott Hotel Hanoi/505916043.jpg",
+          "accessibleText": "JW Marriott Hotel Hanoi"
+        },
+        {
+          "imageUrl": "/images/hotels/JW Marriott Hotel Hanoi/540603347.jpg",
+          "accessibleText": "JW Marriott Hotel Hanoi"
+        },
+        {
+          "imageUrl": "/images/hotels/JW Marriott Hotel Hanoi/540603391.jpg",
+          "accessibleText": "JW Marriott Hotel Hanoi"
+        }
+      ],
+      "title": "JW Marriott Hotel Hanoi",
+      "subtitle": "Hoàn Kiếm, Hà Nội | 0.5 km từ trung tâm thành phố",
+      "benefits": [
+        "Hủy phòng miễn phí",
+        "Không cần thanh toán trước – thanh toán tại khách sạn",
+        "Wifi miễn phí"
+      ],
+      "price": "6500000",
+      "ratings": "5",
+      "city": "Hà Nội",
+      "reviews": {
+        "data": [
+          {
+            "reviewerName": "Nguyễn Văn An",
+            "rating": 5,
+            "review": "Khách sạn rất sang trọng, nhân viên thân thiện và chuyên nghiệp. Đồ ăn sáng rất ngon!",
+            "date": "Ngày lưu trú: 2024-01-10",
+            "verified": true
+          },
+          {
+            "reviewerName": "Trần Thị Mai",
+            "rating": 4,
+            "review": "Phòng sạch sẽ, vị trí thuận tiện gần Hồ Gươm. Giá hơi cao nhưng đáng tiền.",
+            "date": "Ngày lưu trú: 2025-02-15",
+            "verified": false
+          },
+          {
+            "reviewerName": "Lê Hoàng Nam",
+            "rating": 3,
+            "review": "Dịch vụ ổn, nhưng phòng hơi nhỏ so với kỳ vọng.",
+            "date": "Ngày lưu trú: 2024-03-20",
+            "verified": true
+          }
+        ]
+      }
+    },
+    {
+      "hotelCode": 71223,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/Melia Ba Vi Mountain Retreat/136294750.jpg",
+          "accessibleText": "Melia Ba Vi Mountain Retreat"
+        }
+      ],
+      "title": "Melia Ba Vi Mountain Retreat",
+      "subtitle": " Hà Nội | 23 km từ trung tâm thành phố",
+      "benefits": [
+        "Hủy phòng miễn phí",
+        "Wifi miễn phí",
+        "Hồ bơi ngoài trời"
+      ],
+      "price": "4500000",
+      "ratings": "4.5",
+      "city": "Hà Nội"
+    },
+    {
+      "hotelCode": 71224,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/JW Marriott Hotel and Suites Saigon/655143230.jpg",
+          "accessibleText": "JW Marriott Hotel and Suites Saigon"
+        }
+      ],
+      "title": "JW Marriott Hotel and Suites Saigon",
+      "subtitle": " TP. Hồ Chí Minh | 2.5 km từ trung tâm thành phố",
+      "benefits": [
+        "Hủy phòng miễn phí",
+        "Không cần thanh toán trước – thanh toán tại khách sạn",
+        "Wifi miễn phí",
+        "Bữa sáng miễn phí"
+      ],
+      "price": "7000000",
+      "ratings": "5",
+      "city": "Hồ Chí Minh"
+    },
+    {
+      "hotelCode": 71225,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/PARKROYAL Saigon/133800871.jpg",
+          "accessibleText": "PARKROYAL Saigon"
+        }
+      ],
+      "title": "PARKROYAL Saigon",
+      "subtitle": "Quận 1, TP. Hồ Chí Minh | 0.3 km từ trung tâm thành phố",
+      "benefits": [
+        "Hồ bơi ngoài trời",
+        "Wifi miễn phí",
+        "Trà/cà phê trong phòng",
+        "Dịch vụ đưa đón sân bay"
+      ],
+      "price": "5200000",
+      "ratings": "4.8",
+      "city": "Hồ Chí Minh"
+    },
+    {
+      "hotelCode": 81223,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/Awaken Da Nang Hotel/605065945.jpg",
+          "accessibleText": "Awaken Da Nang Hotel"
+        }
+      ],
+      "title": "Awaken Da Nang Hotel",
+      "subtitle": "Sơn Trà, Đà Nẵng | 12 km từ trung tâm thành phố",
+      "benefits": [
+        "Bãi biển riêng",
+        "Wifi miễn phí",
+        "Hủy phòng miễn phí",
+        "Spa và trung tâm chăm sóc sức khỏe"
+      ],
+      "price": "4800000",
+      "ratings": "5",
+      "city": "Đà Nẵng"
+    },
+    {
+      "hotelCode": 81224,
+      "images": [
+        {
+          "imageUrl": "/images/hotels/Hilton Da Nang/483826926.jpg",
+          "accessibleText": "Hilton Da Nang"
+        }
+      ],
+      "title": "Hilton Da Nang",
+      "subtitle": "Bãi biển Mỹ Khê, Đà Nẵng | 4 km từ trung tâm thành phố",
+      "benefits": [
+        "Bãi biển riêng",
+        "Hồ bơi ngoài trời",
+        "Wifi miễn phí",
+        "Bữa tối miễn phí"
+      ],
+      "price": "3500000",
+      "ratings": "4.3",
+      "city": "Đà Nẵng"
+    }
+  ]
