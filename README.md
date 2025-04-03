@@ -51,20 +51,20 @@ npm install
 Tạo file `.env` và điền các thông tin cần thiết:
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/DB_Stay_Booking
+MONGO_URI=mongodb+srv://bevanthanhlion:85YOcSpoxCkeco5r@project01.1dinw.mongodb.net/DB_Stay_Booking
 JWT_SECRET=superstrongsecret123!
 
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+# Email Configuration để thực hiện chức năng gửi mail quên mật khẩu hay thông báo đặt phòng
+# Thay EMAIL_USER bằng địa chỉ Gmail của bạn
+# Ví dụ: EMAIL_USER=yourname@gmail.com
+EMAIL_USER=thanhgay171@gmail.com
+
+# Thay EMAIL_PASSWORD bằng App Password bạn vừa tạo
+# Ví dụ: EMAIL_PASSWORD=abcd efgh ijkl mnop
+EMAIL_PASSWORD=aomk wpic duaq hhuu
 ```
 
-#### **Bước 4: Chạy database seed để import dữ liệu vào database dữ liệu**
-```bash
-npm run db:seed
-```
-
-#### **Bước 5: Khởi động backend**
+#### **Bước 44: Khởi động backend**
 ```bash
 npm run dev
 ```

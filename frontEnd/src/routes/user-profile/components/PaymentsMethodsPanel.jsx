@@ -83,7 +83,7 @@ const PaymentMethodsPanel = ({
                 </div>
               )}
 
-              <div className="ml-4 flex-shrink-0">
+              {/* <div className="ml-4 flex-shrink-0">
                 {editIndex === index ? (
                   <>
                     <button
@@ -107,7 +107,7 @@ const PaymentMethodsPanel = ({
                     Chỉnh sửa
                   </button>
                 )}
-              </div>
+              </div> */}
             </li>
           ))}
         </ul>

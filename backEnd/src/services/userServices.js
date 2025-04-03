@@ -1,6 +1,8 @@
 import userRepository from '../repositories/userRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { sendMail } from '../config/mailer.js';
+import crypto from 'crypto';
 
 const register = async (userData) => {
     const existing = await userRepository.findByEmail(userData.email);
@@ -55,4 +57,30 @@ const getUserPayments = async (userId) => {
   return await userRepository.getUserPaymentMethods(userId);
 };
 
-export default { register, login, getUserPayments, getAuthUser,getUserBookings, updateUserProfile };
+
+const forgotPassword = async (email) => {
+  const user = await userRepository.findByEmail(email);
+
+  if (!user) {
+      throw new Error('Email không tồn tại.');
+  }
+
+  // Tạo mật khẩu mới ngẫu nhiên
+  const newPassword = crypto.randomBytes(6).toString('hex');
+
+  // Hash mật khẩu mới trước khi lưu vào database
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Gọi repository để cập nhật mật khẩu đã hash vào database
+  await userRepository.updateUserPassword(email, hashedPassword);
+
+  const subject = 'Khôi phục mật khẩu';
+  const text = `Mật khẩu mới của bạn là: ${newPassword}`;
+
+  // Gửi email chứa mật khẩu mới cho người dùng
+  await sendMail(email, subject, text);
+
+  return 'Mật khẩu mới đã được gửi đến email của bạn.';
+};
+
+export default { register, login, getUserPayments, getAuthUser,getUserBookings, updateUserProfile,forgotPassword };

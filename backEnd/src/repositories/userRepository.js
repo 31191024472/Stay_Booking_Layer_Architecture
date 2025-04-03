@@ -6,6 +6,10 @@ import mongoose from 'mongoose';
 // Tìm user theo email
 const findByEmail = (email) => User.findOne({ email });
 
+// Cập nhật mật khẩu (HASHED) của user
+export const updateUserPassword = async (email, hashedPassword) => {
+     await User.findOneAndUpdate({ email }, { password_hash: hashedPassword });
+};
 // Tạo user mới
 const createUser = (userData) => User.create(userData);
 
@@ -44,4 +48,4 @@ const getUserPaymentMethods = (userId) => {
     return PaymentMethod.find({ userId: userId });
 };
 
-export default { findByEmail, createUser, updateUser ,findById, deleteUser, findByUUID, updateUser,findBookingsByUserId,getUserPaymentMethods };
+export default { findByEmail,updateUserPassword, createUser, updateUser ,findById, deleteUser, findByUUID, updateUser,findBookingsByUserId,getUserPaymentMethods };

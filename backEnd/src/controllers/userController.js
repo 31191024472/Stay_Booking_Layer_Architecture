@@ -2,6 +2,7 @@ import userServices from "../services/userServices.js";
 import dotenv from "dotenv";
 
 dotenv.config();
+
 export const register = async (req, res) => {
   try {
     const user = await userServices.register(req.body);
@@ -19,12 +20,23 @@ export const login = async (req, res) => {
     res.status(401).json({ success: false, message: err.message });
   }
 };
+
+export const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+      const message = await userServices.forgotPassword(email);
+      res.status(200).json({ message });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
 // Lấy thông tin user từ token
 export const authUser = async (req, res) => {
   try {
       // Lấy user từ services bằng ObjectId từ MongoDB (_id)
       const user = await userServices.getAuthUser(req.user._id);
-      console.log("🔹 Check function userService in userController:", user);
 
       if (!user) {
           return res.status(404).json({ success: false, message: "User not found" });

@@ -1,6 +1,6 @@
 import hotelRepository from '../repositories/hotelRepository.js';
 import RoomRepository from '../repositories/RoomRepository.js';
-import BookingRepository from '../repositories/BookingRepository.js';
+import BookingRepository from '../repositories/bookingRepository.js';
 
 class HotelService {
   async getHotelBookingDetails(hotelCode, filters) {

@@ -130,13 +130,13 @@ const UserProfile = () => {
           </button>
         </div>
         <Tabs isTabsVisible={isTabsVisible} wrapperRef={wrapperRef}>
-          <TabPanel label="Personal Details" icon={faAddressCard}>
+          <TabPanel label="Thông tin cá nhân" icon={faAddressCard}>
             <ProfileDetailsPanel userDetails={userDetails} />
           </TabPanel>
-          <TabPanel label="Bookings" icon={faHotel}>
+          <TabPanel label="Lịch sử đặt phòng" icon={faHotel}>
             <BookingPanel bookings={userBookingsData.data} />
           </TabPanel>
-          <TabPanel label="Payment details" icon={faCreditCard}>
+          <TabPanel label="Phương thức thanh toán" icon={faCreditCard}>
             <PaymentMethodsPanel
               userPaymentMethodsData={userPaymentMethodsData}
               setUserPaymentMethodsData={setUserPaymentMethodsData}

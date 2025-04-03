@@ -30,6 +30,15 @@ const seedDatabase = async () => {
     // Thêm Quốc Gia
     const vietnam = await Country.create({ name: "Vietnam", code: "VN" });
     const usa = await Country.create({ name: "United States", code: "US" });
+    const canada = await Country.create({ name: "Canada", code: "CA" });
+    const uk = await Country.create({ name: "United Kingdom", code: "GB" });
+    const france = await Country.create({ name: "France", code: "FR" });
+    const germany = await Country.create({ name: "Germany", code: "DE" });
+    const japan = await Country.create({ name: "Japan", code: "JP" });
+    const southKorea = await Country.create({ name: "South Korea", code: "KR" });
+    const australia = await Country.create({ name: "Australia", code: "AU" });
+    const india = await Country.create({ name: "India", code: "IN" });
+    
 
     // Thêm Thành phố
     const hanoi = await City.create({ name: "Hà Nội", code: "HN", image: "" });

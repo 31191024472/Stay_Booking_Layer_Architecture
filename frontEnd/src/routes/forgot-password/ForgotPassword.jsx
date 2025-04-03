@@ -35,7 +35,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     if (validations.validate('email', loginData.email)) {
-      const response = await networkAdapter.post('/api/forgot', loginData);
+      const response = await networkAdapter.post('/api/users/forgot-password', loginData);
       if (response) {
         setsuccess(true);
       } else {
