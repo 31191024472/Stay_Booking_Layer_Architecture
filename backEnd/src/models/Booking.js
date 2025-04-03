@@ -1,22 +1,24 @@
 import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },   // Người đặt
-  hotelCode: { type: Number, required: true },                                    // Khách sạn
-  roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },  // Loại phòng
-  
-  checkInDate: { type: Date, required: true },
-  checkOutDate: { type: Date, required: true },
-  
-  quantity: { type: Number, default: 1 },       // Số lượng phòng đặt
-  totalPrice: { type: Number, required: true }, // Tổng tiền
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  hotelId: { type: String, required: true },
+  checkIn: { type: Date, required: true },
+  checkOut: { type: Date, required: true },
+  guests: { type: Number, required: true },
+  rooms: { type: Number, required: true },
+  roomType: { type: String, required: true },
+  totalPrice: { type: Number, required: true },
+  paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod', required: true },
+  status: { type: String, enum: ['Pending', 'Confirmed', 'Cancelled'], default: 'Pending' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-  paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod' }, // Phương thức thanh toán
-
-  status: { type: String, enum: ['Pending', 'Confirmed', 'Cancelled'], default: 'Pending' }, // Trạng thái
-  source: { type: String, enum: ['web', 'app', 'reception'], default: 'web' }, // Đặt qua đâu
-  
-  createdAt: { type: Date, default: Date.now }
+// Cập nhật updatedAt trước khi lưu
+bookingSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 export default mongoose.model('Booking', bookingSchema);

@@ -1,15 +1,73 @@
 import mongoose from 'mongoose';
 
 const roomSchema = new mongoose.Schema({
-  hotelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hotel', required: true }, // Tham chiếu khách sạn chứa phòng này
-  roomType: { type: String, required: true },       // Loại phòng: Deluxe, Suite, Standard
-  description: String,                              // Mô tả chi tiết về phòng
-  pricePerNight: { type: Number, required: true },  // ✅ Giá phòng mỗi đêm (quan trọng)
-  maxOccupancy: Number,                             // Số người tối đa
-  bedType: String,                                  // Loại giường: King, Queen, Twin
-  amenities: [String],                              // Danh sách tiện ích trong phòng
-  quantity: { type: Number, default: 1 },           // Tổng số lượng phòng loại này trong khách sạn
-  imageUrls: [String]                               // ✅ Mảng URL hình ảnh của phòng
+  hotelId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hotel',
+    required: true
+  },
+  roomType: {
+    type: String,
+    required: true,
+    enum: ['Standard', 'Deluxe', 'Suite', 'Executive']
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  pricePerNight: {
+    type: Number,
+    required: true
+  },
+  maxOccupancy: {
+    type: Number,
+    required: true,
+    default: 2
+  },
+  bedType: {
+    type: String,
+    required: true
+  },
+  amenities: [{
+    type: String
+  }],
+  totalRooms: {
+    type: Number,
+    required: true,
+    default: 1
+  },
+  availableRooms: {
+    type: Number,
+    required: true,
+    default: 1
+  },
+  imageUrls: [{
+    type: String
+  }],
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  discount: {
+    percentage: {
+      type: Number,
+      default: 0
+    }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Cập nhật updatedAt trước khi lưu
+roomSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 export default mongoose.model('Room', roomSchema);

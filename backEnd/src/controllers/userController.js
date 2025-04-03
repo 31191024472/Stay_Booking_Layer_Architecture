@@ -63,45 +63,64 @@ export const getUserBookings = async (req, res) => {
 
     // Map dữ liệu để trả về đúng format yêu cầu
     const formattedBookings = bookings.map(booking => ({
-      bookingId: booking.bookingId,
-      bookingDate: booking.bookingDate.toISOString().split('T')[0], // Lấy yyyy-mm-dd
-      hotelName: booking.hotelName,
-      checkInDate: booking.checkInDate.toISOString().split('T')[0],
-      checkOutDate: booking.checkOutDate.toISOString().split('T')[0],
-      totalFare: booking.totalFare
+      bookingId: booking._id,
+      hotelId: booking.hotelId,
+      checkIn: booking.checkIn,
+      checkOut: booking.checkOut,
+      guests: booking.guests,
+      rooms: booking.rooms,
+      roomType: booking.roomType,
+      totalPrice: booking.totalPrice,
+      status: booking.status,
+      createdAt: booking.createdAt,
+      paymentMethod: {
+        cardType: booking.paymentMethodId.cardType,
+        cardNumber: booking.paymentMethodId.cardNumber,
+        expiryDate: booking.paymentMethodId.expiryDate,
+        nameOnCard: booking.paymentMethodId.nameOnCard
+      }
     }));
 
     res.json({
-      errors: [],
+      success: true,
       data: {
         elements: formattedBookings
       }
     });
   } catch (error) {
     console.error("Get user bookings error:", error);
-    res.status(500).json({ errors: [error.message], data: { elements: [] } });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || "Có lỗi xảy ra khi lấy danh sách đặt phòng" 
+    });
   }
 };
-
 
 // ✅ Lấy phương thức thanh toán của người dùng
 export const getPayments = async (req, res) => {
   try {
     const payments = await userServices.getUserPayments(req.user._id);
     const formattedPayments = payments.map(payment => ({
+      paymentId: payment._id,
       cardType: payment.cardType,
       cardNumber: payment.cardNumber,
-      expiryDate: payment.expiryDate
+      expiryDate: payment.expiryDate,
+      nameOnCard: payment.nameOnCard,
+      billingAddress: payment.billingAddress,
+      isDefault: payment.isDefault
     }));
 
     res.json({
-      errors: [],
+      success: true,
       data: {
         elements: formattedPayments
       }
     });
   } catch (error) {
     console.error("Get payment methods error:", error);
-    res.status(500).json({ errors: [error.message], data: { elements: [] } });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || "Có lỗi xảy ra khi lấy danh sách phương thức thanh toán" 
+    });
   }
 };

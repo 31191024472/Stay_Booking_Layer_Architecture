@@ -4,10 +4,12 @@ import { fileURLToPath } from 'url';
 import cors from "cors";
 import userRoutes from './routes/userRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
-import paymentRoutes from './routes/paymentTroutes.js';
+import paymentRoutes from './routes/paymentRouter.js';
 import hotelRoutes from "./routes/hotelRoutes.js"
 import miscRoutes from "./routes/miscRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
+import roomRoutes from "./routes/roomRoutes.js"
+
 // Config ExpressExpress
 const app = express();
 app.use(express.json());
@@ -25,20 +27,14 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Lấy đường dẫn tuyệt đối của thư mục hiện tại (vì ES Module không có __dirname)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Cấu hình để phục vụ ảnh tĩnh từ thư mục public
-app.use('/images', express.static(path.join(__dirname, 'public/images')));
-
 
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payment-methods", paymentRoutes);
-app.use('/api/hotel', hotelRoutes);
+app.use('/api/hotels', hotelRoutes);
 app.use('/api/misc', miscRoutes);
+app.use('/api/rooms', roomRoutes);
 
 // Upload imgs API
 app.use('/api', uploadRoutes); // Định tuyến upload

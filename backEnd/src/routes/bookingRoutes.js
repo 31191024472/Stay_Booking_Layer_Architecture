@@ -4,7 +4,10 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/",authMiddleware, createBooking);
-router.get("/", getUserBookings);
+// Tạo đặt phòng mới
+router.post("/", authMiddleware, createBooking);
+
+// Lấy danh sách đặt phòng của user
+router.get("/user", authMiddleware, getUserBookings);
 
 export default router;

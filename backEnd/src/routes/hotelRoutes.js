@@ -9,9 +9,11 @@ import {
   getAvailableCities,
   getHotelFilters,
   getPopularDestinations,
-  getHotelReview
-} from '../controllers/hotelController.js';
-
+  getHotelReview,
+  getHotelBookingDetails,
+  addHotelReview
+} from '../controllers/HotelController.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 // ✅ Các API tĩnh hoặc không cần hotelCode
@@ -24,6 +26,8 @@ router.get('/', getHotels);
 // ✅ Các API dynamic liên quan đến hotelCode (chi tiết, review)
 // Review phải đặt trước hotelCode
 router.get('/:hotelCode/reviews', getHotelReview);
+router.post('/:hotelCode/reviews', authMiddleware, addHotelReview);
+router.get('/:hotelCode/booking/enquiry', getHotelBookingDetails);
 router.get('/:hotelCode', getHotelByCode);
 
 // ✅ CRUD Hotel

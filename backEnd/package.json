@@ -12,7 +12,6 @@
     "db:rollback": "sequelize db:migrate:undo:all",
     "update-images": "node -r dotenv/config src/scripts/updateImageUrls.js"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",

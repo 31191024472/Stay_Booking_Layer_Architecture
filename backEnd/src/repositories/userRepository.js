@@ -36,12 +36,12 @@ const findByUUID = async (uuid) => {
 
 // ✅ Lấy danh sách đặt phòng của người dùng
 const findBookingsByUserId = (userId) => {
-    return Booking.find({ user: userId });
-  };
+    return Booking.find({ userId: userId });
+};
 
 // ✅ Lấy phương thức thanh toán của người dùng
 const getUserPaymentMethods = (userId) => {
-    return PaymentMethod.find({ user: userId });
-  };
+    return PaymentMethod.find({ userId: userId });
+};
 
 export default { findByEmail, createUser, updateUser ,findById, deleteUser, findByUUID, updateUser,findBookingsByUserId,getUserPaymentMethods };
