@@ -1,42 +1,58 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import cors from "cors";
-import userRoutes from './routes/userRoutes.js';
-import bookingRoutes from './routes/bookingRoutes.js';
-import paymentRoutes from './routes/paymentRouter.js';
-import hotelRoutes from "./routes/hotelRoutes.js"
-import miscRoutes from "./routes/miscRoutes.js"
-import uploadRoutes from "./routes/uploadRoutes.js"
-import roomRoutes from "./routes/roomRoutes.js"
+import express from "express";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import hotelRoutes from "./routes/hotelRoutes.js";
+import miscRoutes from "./routes/miscRoutes.js";
+import paymentRoutes from "./routes/paymentRouter.js";
+import roomRoutes from "./routes/roomRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
+import adminBookingRoutes from "./routes/adminBookingRoutes.js";
+import adminCountryRoutes from "./routes/adminCountryRoutes.js";
+import adminEmailRoutes from "./routes/adminEmailRoutes.js";
+import adminHotelRoutes from "./routes/adminHotelRoutes.js";
+import adminRevenueRoutes from "./routes/adminRevenueRoutes.js";
+import adminRoomRoutes from "./routes/adminRoomRoutes.js";
+import adminUserRoutes from "./routes/adminUserRoutes.js";
 
 // Config ExpressExpress
 const app = express();
 app.use(express.json());
 
 // Config Cros
-app.use(cors({
+app.use(
+  cors({
     origin: "http://localhost:3000",
     credentials: true,
     methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
-}));
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 // Test API
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payment-methods", paymentRoutes);
-app.use('/api/hotels', hotelRoutes);
-app.use('/api/misc', miscRoutes);
-app.use('/api/rooms', roomRoutes);
+app.use("/api/hotels", hotelRoutes);
+app.use("/api/misc", miscRoutes);
+app.use("/api/rooms", roomRoutes);
+
+// Admin routes
+app.use("/api/admin/revenue", adminRevenueRoutes);
+app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/admin/bookings", adminBookingRoutes);
+app.use("/api/admin/rooms", adminRoomRoutes);
+app.use("/api/admin/hotels", adminHotelRoutes);
+app.use("/api/admin/countries", adminCountryRoutes);
+app.use("/api/admin/email", adminEmailRoutes);
 
 // Upload imgs API
-app.use('/api', uploadRoutes); // Định tuyến upload
+app.use("/api", uploadRoutes); // Định tuyến upload
 
 export default app;
