@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  user_id: { type: String, ref: "User", required: true },
-  message: { type: String, required: true },
-  is_read: { type: Boolean, default: false },
-  created_at: { type: Date, default: Date.now },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Gửi cho ai
+  title: String,                            // Tiêu đề thông báo
+  message: String,                          // Nội dung
+  type: { type: String, enum: ['booking', 'payment', 'system'], default: 'system' }, // Loại thông báo
+  isRead: { type: Boolean, default: false },  // Đánh dấu đã đọc
+  createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Notification", notificationSchema);
+export default mongoose.model('Notification', notificationSchema);

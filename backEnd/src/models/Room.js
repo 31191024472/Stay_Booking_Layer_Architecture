@@ -1,14 +1,77 @@
 import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
 
 const roomSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  hotel_id: { type: String, ref: "Hotel", required: true },
-  name: { type: String, required: true },
-  type: { type: String, enum: ["Single", "Double", "Suite", "Deluxe"], required: true },
-  price: { type: Number, required: true },
-  availability: { type: Boolean, default: true },
-  created_at: { type: Date, default: Date.now },
+  hotelId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Hotel",
+    required: true,
+  },
+  roomType: {
+    type: String,
+    required: true,
+    enum: ["Standard", "Deluxe", "Suite", "Executive"],
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  pricePerNight: {
+    type: Number,
+    required: true,
+  },
+  maxOccupancy: {
+    type: Number,
+    required: true,
+    default: 2,
+  },
+  bedType: {
+    type: String,
+    required: true,
+  },
+  amenities: [
+    {
+      type: String,
+    },
+  ],
+  totalRooms: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
+  availableRooms: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
+  imageUrls: [
+    {
+      type: String,
+    },
+  ],
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  discount: {
+    percentage: {
+      type: Number,
+      default: 0,
+    },
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Cập nhật updatedAt trước khi lưu
+roomSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 export default mongoose.model("Room", roomSchema);

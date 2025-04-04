@@ -20,12 +20,17 @@ const removeHotel = async (hotelCode) => {
     return await hotelRepository.deleteHotel(hotelCode);
 };
 
-const fetchPopularDestinations = async () => {
-    return await hotelRepository.getPopularDestinations();
+const getPopularDestinations = async () => {
+  return await hotelRepository.fetchPopularDestinations();
 };
 
-const fetchNearbyHotels = async (latitude, longitude) => {
-    return await hotelRepository.getNearbyHotels(latitude, longitude);
+const getHotelsByCity = async (city) => {
+  try {
+      return await hotelRepository.findHotelsByCity(city); 
+  } catch (error) {
+      console.error("❌ Lỗi khi lấy danh sách khách sạn:", error);
+      throw new Error("Lỗi khi lấy danh sách khách sạn từ database");
+  }
 };
 
 const fetchAvailableCities = async () => {
@@ -63,14 +68,20 @@ const getFilters = async () => {
         errors: [],
       };
   };
+
+  const getHotelReviews = async (hotelCode, page, limit) => {
+    return await hotelRepository.fetchHotelReviews(hotelCode, page, limit);
+  };
+
 export default {
     getAllHotels,
     getHotelByCode,
     addHotel,
     editHotel,
     removeHotel,
-    fetchPopularDestinations,
-    fetchNearbyHotels,
+    getPopularDestinations,
+    getHotelsByCity,
     fetchAvailableCities,
-    getFilters
+    getFilters,
+    getHotelReviews
 };

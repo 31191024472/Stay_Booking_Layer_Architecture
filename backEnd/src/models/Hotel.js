@@ -1,34 +1,27 @@
 import mongoose from "mongoose";
 
-const imageSchema = new mongoose.Schema({
-  imageUrl: { type: String, required: true },
-  accessibleText: { type: String, required: true },
-});
-
-const reviewSchema = new mongoose.Schema({
-  reviewerName: { type: String, required: true },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-  review: { type: String, required: true },
-  date: { type: String, required: true },
-  verified: { type: Boolean, default: false },
-});
-
 const hotelSchema = new mongoose.Schema(
   {
-    hotelCode: { type: Number, required: true, unique: true },
-    title: { type: String, required: true },
-    subtitle: { type: String },
-    city: { type: String, required: true },
-    price: { type: Number, required: true },
-    ratings: { type: Number, required: true, min: 0, max: 5 },
-    benefits: [{ type: String }],
-    images: [imageSchema],
-    reviews: {
-      data: [reviewSchema],
-    },
+    hotelCode: { type: Number, required: true, unique: true }, // Mã định danh riêng cho khách sạn
+    title: { type: String, required: true }, // Tên khách sạn
+    subtitle: { type: String }, // Mô tả ngắn hoặc địa chỉ
+    description: { type: String }, // Mô tả chi tiết về khách sạn
+    cityId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "City",
+      required: true,
+    }, // Tham chiếu đến City
+    propertyType: { type: String, required: true }, // Loại khách sạn (Hotel, Resort, etc.)
+    benefits: [{ type: String }], // Danh sách các tiện ích chung (free wifi, hồ bơi,...)
+    ratings: { type: Number, default: 0 }, // Điểm đánh giá trung bình
+    imageUrls: [{ type: String }], // Mảng URL hình ảnh của khách sạn
+    rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }], // Danh sách các phòng của khách sạn
+    createdAt: { type: Date, default: Date.now }, // Thời gian tạo
+    updatedAt: { type: Date, default: Date.now }, // Thời gian cập nhật
   },
-  { timestamps: true }
+  {
+    timestamps: true, // Tự động cập nhật createdAt và updatedAt
+  }
 );
 
-const Hotel = mongoose.model("Hotel", hotelSchema);
-export default Hotel;
+export default mongoose.model("Hotel", hotelSchema);

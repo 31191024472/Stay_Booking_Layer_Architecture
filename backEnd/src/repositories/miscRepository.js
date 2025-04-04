@@ -1,4 +1,4 @@
-import Country from '../models/Countries.js';
+import Country from '../models/Country.js';
 
 const getCountries = () => {
   return Country.find();  // Trả toàn bộ danh sách quốc gia
