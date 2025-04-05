@@ -12,7 +12,10 @@ const bookingSchema = new mongoose.Schema({
   paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod', required: true },
   status: { type: String, enum: ['Pending', 'Confirmed', 'Cancelled'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  // timestamps: true, // Thêm dòng này!
+  
+  
 });
 
 // Cập nhật updatedAt trước khi lưu

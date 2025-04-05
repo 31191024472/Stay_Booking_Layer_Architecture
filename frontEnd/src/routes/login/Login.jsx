@@ -8,13 +8,7 @@ import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
 import { LOGIN_MESSAGES } from 'utils/constants';
 
-/**
- * Login Component
- * Renders a login form allowing users to sign in to their account.
- * It handles user input for email and password, submits login credentials to the server,
- * and navigates the user to their profile upon successful authentication.
- * Displays an error message for invalid login attempts.
- */
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,25 +20,14 @@ const Login = () => {
 
   const [errorMessage, setErrorMessage] = useState(false);
 
-  /**
-   * Handles input changes for the login form fields.
-   * Updates the loginData state with the field values.
-   * @param {Object} e - The event object from the input field.
-   */
   const handleInputChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  /**
-   * Handles the submission of the login form.
-   * Attempts to authenticate the user with the provided credentials.
-   * Navigates to the user profile on successful login or sets an error message on failure.
-   * @param {Object} e - The event object from the form submission.
-   */
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
   
-    // Kiểm tra email hợp lệ trước khi gửi request
     if (!validations.validate("email", loginData.email)) {
       setErrorMessage(LOGIN_MESSAGES.FAILED);
       return;
@@ -52,30 +35,34 @@ const Login = () => {
   
     try {
       const response = await networkAdapter.post("api/users/login", loginData);
-      console.log("Login response:", response); // Thêm log để debug
+      console.log("Login response:", response);
   
-      if (response.success) {
-        // 1. Lưu token vào localStorage
-        localStorage.setItem('token', response.token);
-        
-        // 2. Cập nhật trạng thái xác thực
-        context.setIsAuthenticated(true);
-        context.setUserDetails(response.data);
-        
-        // 3. Kích hoạt kiểm tra xác thực
+      if (response.success && response.token) {
+        // 1. Lưu token
+        localStorage.setItem("token", response.token);
+  
+        // 2. Gọi lại auth-user để lấy thông tin người dùng
         await context.triggerAuthCheck();
-        
-        // 4. Chuyển hướng thông minh
+        if (context.loading) {
+          setErrorMessage("Đang kiểm tra thông tin người dùng...");
+          return; // Nếu đang trong quá trình kiểm tra thông tin, không thực hiện chuyển hướng
+        }
+        // 3. Chuyển hướng thông minh
         setTimeout(() => {
-          // Kiểm tra nếu có from trong state và nó là URL đặt phòng
-          if (location.state?.from && location.state.from.includes('/hotel/')) {
-            // Chuyển hướng về trang đặt phòng
-            navigate(location.state.from);
+          const { userDetails } = context;
+          const fromPage = location.state?.from;
+        
+          if (userDetails?.role === "admin") {
+            navigate("/admin"); 
           } else {
-            // Nếu không phải từ trang đặt phòng, chuyển về trang profile
-            navigate("/user-profile");
+            if (fromPage && fromPage.includes("/hotel/")) {
+              navigate(fromPage); 
+            } else {
+              navigate("/user-profile"); 
+            }
           }
         }, 100);
+        
       } else {
         setErrorMessage(response.errors?.[0] || LOGIN_MESSAGES.FAILED);
       }
@@ -84,11 +71,7 @@ const Login = () => {
       setErrorMessage("Lỗi kết nối đến server.");
     }
   };
-  
 
-  /**
-   * Clears the current error message displayed to the user.
-   */
   const dismissError = () => {
     setErrorMessage('');
   };

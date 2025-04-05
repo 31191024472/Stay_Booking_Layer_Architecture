@@ -1,9 +1,8 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import DropdownButton from 'components/ux/dropdown-button/DropdownButton';
-import { networkAdapter } from 'services/NetworkAdapter';
+import { networkAdapter } from 'services/NetworkAdapter.js';
 import { useContext } from 'react';
 import { AuthContext } from 'contexts/AuthContext';
-
 /**
  * Component hiển thị các mục điều hướng cho thanh điều hướng trên cả giao diện di động và máy tính.
  *
