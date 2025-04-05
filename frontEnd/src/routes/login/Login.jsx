@@ -1,12 +1,10 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { networkAdapter } from 'services/NetworkAdapter';
-import React, { useContext } from 'react';
-import { AuthContext } from 'contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
+import { AuthContext } from 'contexts/AuthContext';
+import { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { networkAdapter } from 'services/NetworkAdapter';
 import { LOGIN_MESSAGES } from 'utils/constants';
+import validations from 'utils/validations';
 
 
 const Login = () => {
@@ -32,7 +30,7 @@ const Login = () => {
       setErrorMessage(LOGIN_MESSAGES.FAILED);
       return;
     }
-  
+    console.log('Login data:', loginData);
     try {
       const response = await networkAdapter.post("api/users/login", loginData);
       console.log("Login response:", response);
@@ -67,8 +65,8 @@ const Login = () => {
         setErrorMessage(response.errors?.[0] || LOGIN_MESSAGES.FAILED);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setErrorMessage("Lỗi kết nối đến server.");
+      console.error('Login error:', error);
+      setErrorMessage('Lỗi kết nối đến server.');
     }
   };
 
@@ -91,7 +89,7 @@ const Login = () => {
               <p className="text-gray-500">
                 Đăng nhập để tiếp tục với tài khoản của bạn
               </p>
-            </div> 
+            </div>
             <div className="mb-6">
               <input
                 type="email"

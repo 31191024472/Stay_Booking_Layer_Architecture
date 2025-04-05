@@ -1,14 +1,26 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.scss';
-import HotelsSearch from './routes/listings/HotelsSearch';
-import UserProfile from './routes/user-profile/UserProfile';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import Home from './routes/home/Home';
-import { AuthProvider } from './contexts/AuthContext';
+import HotelsSearch from './routes/listings/HotelsSearch';
+import UserProfile from './routes/user-profile/UserProfile';
 // import { makeServer } from './mirage/mirageServer';
+import AdminDashboard from 'routes/admin/AdminDashboard';
+import AdminLayout from 'routes/admin/AdminLayout';
+import EmailPromotion from 'routes/admin/AdminNotification';
+import BookingManagement from 'routes/admin/BookingManagement';
+import HotelManagement from 'routes/admin/HotelManagement';
+import ProtectedRoute from 'routes/admin/ProtectedRoute';
+import RoomManagement from 'routes/admin/RoomManagement';
+import UserManagement from 'routes/admin/UserManagement';
+import BookingConfirmation from 'routes/booking-confimation/BookingConifrmation';
+import Checkout from 'routes/checkout/Checkout';
+import AboutUs from './routes/about-us/AboutUs';
+import ForgotPassword from './routes/forgot-password/ForgotPassword';
 import HotelDetails from './routes/hotel-details/HotelDetails';
+import BaseLayout from './routes/layouts/base-layout/BaseLayout';
 import Login from './routes/login/Login';
 import Register from './routes/register/Register';
 import AboutUs from './routes/about-us/AboutUs';
@@ -105,4 +117,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-
