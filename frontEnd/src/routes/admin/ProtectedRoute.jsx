@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/AuthContext.js';
 
 const ProtectedRoute = ({ role }) => {
   const { userDetails, loading } = useContext(AuthContext);
-  console.log("Check login user detail", userDetails);
+  // console.log("Check login user detail", userDetails);
 
   if (loading) return <p>Loading...</p>;
 

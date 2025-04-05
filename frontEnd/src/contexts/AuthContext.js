@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuthStatus = async () => {
       try {
         const response = await networkAdapter.get('api/users/auth-user');
-        console.log("Auth check response:", response);
+        // console.log("Auth check response:", response);
         if (response && response.data) {
           setIsAuthenticated(response.success);
           setUserDetails(response.data);
@@ -38,9 +38,9 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, [authCheckTrigger]);
 
-  useEffect(() => {
-    console.log("🧾 userDetails updated:", userDetails);
-  }, [userDetails]);
+  // useEffect(() => {
+  //   console.log("🧾 userDetails updated:", userDetails);
+  // }, [userDetails]);
 
   const triggerAuthCheck = async () => {
     setAuthCheckTrigger((prev) => !prev);
