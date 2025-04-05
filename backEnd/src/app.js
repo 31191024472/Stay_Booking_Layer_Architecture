@@ -1,6 +1,3 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url'; 
 import cors from "cors";
 import express from "express";
 import bookingRoutes from "./routes/bookingRoutes.js";
@@ -10,14 +7,6 @@ import paymentRoutes from "./routes/paymentRouter.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
-import adminBookingRoutes from "./routes/adminBookingRoutes.js";
-import adminCountryRoutes from "./routes/adminCountryRoutes.js";
-import adminEmailRoutes from "./routes/adminEmailRoutes.js";
-import adminHotelRoutes from "./routes/adminHotelRoutes.js";
-import adminRevenueRoutes from "./routes/adminRevenueRoutes.js";
-import adminRoomRoutes from "./routes/adminRoomRoutes.js";
-import adminUserRoutes from "./routes/adminUserRoutes.js";
 
 // admin router
 import adminBookingRoutes from "./routes/adminBookingRoutes.js"
