@@ -1,12 +1,10 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { networkAdapter } from 'services/NetworkAdapter';
-import React, { useContext } from 'react';
-import { AuthContext } from 'contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
+import { AuthContext } from 'contexts/AuthContext';
+import { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { networkAdapter } from 'services/NetworkAdapter';
 import { LOGIN_MESSAGES } from 'utils/constants';
+import validations from 'utils/validations';
 
 /**
  * Login Component
@@ -43,28 +41,28 @@ const Login = () => {
    */
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Kiểm tra email hợp lệ trước khi gửi request
-    if (!validations.validate("email", loginData.email)) {
+    if (!validations.validate('email', loginData.email)) {
       setErrorMessage(LOGIN_MESSAGES.FAILED);
       return;
     }
-  
+    console.log('Login data:', loginData);
     try {
-      const response = await networkAdapter.post("api/users/login", loginData);
-      console.log("Login response:", response); // Thêm log để debug
-  
+      const response = await networkAdapter.post('api/users/login', loginData);
+      console.log('Login response:', response); // Thêm log để debug
+
       if (response.success) {
         // 1. Lưu token vào localStorage
         localStorage.setItem('token', response.token);
-        
+
         // 2. Cập nhật trạng thái xác thực
         context.setIsAuthenticated(true);
         context.setUserDetails(response.data);
-        
+
         // 3. Kích hoạt kiểm tra xác thực
         await context.triggerAuthCheck();
-        
+
         // 4. Chuyển hướng thông minh
         setTimeout(() => {
           // Kiểm tra nếu có from trong state và nó là URL đặt phòng
@@ -73,18 +71,17 @@ const Login = () => {
             navigate(location.state.from);
           } else {
             // Nếu không phải từ trang đặt phòng, chuyển về trang profile
-            navigate("/user-profile");
+            navigate('/user-profile');
           }
         }, 100);
       } else {
         setErrorMessage(response.errors?.[0] || LOGIN_MESSAGES.FAILED);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setErrorMessage("Lỗi kết nối đến server.");
+      console.error('Login error:', error);
+      setErrorMessage('Lỗi kết nối đến server.');
     }
   };
-  
 
   /**
    * Clears the current error message displayed to the user.
@@ -108,7 +105,7 @@ const Login = () => {
               <p className="text-gray-500">
                 Đăng nhập để tiếp tục với tài khoản của bạn
               </p>
-            </div> 
+            </div>
             <div className="mb-6">
               <input
                 type="email"

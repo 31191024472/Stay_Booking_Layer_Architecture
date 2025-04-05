@@ -1,15 +1,14 @@
-import mongoose from "mongoose";
 import connectDB from "../config/db.js";
-import User from "../models/User.js";
-import Country from "../models/Country.js";
-import City from "../models/City.js";
-import Hotel from "../models/Hotel.js";
-import Room from "../models/Room.js";
-import PaymentMethod from "../models/PaymentMethod.js";
-import Discount from "../models/Discount.js";
-import Review from "../models/Review.js";
 import Booking from "../models/Booking.js";
+import City from "../models/City.js";
+import Country from "../models/Country.js";
+import Discount from "../models/Discount.js";
+import Hotel from "../models/Hotel.js";
 import Notification from "../models/Notification.js";
+import PaymentMethod from "../models/PaymentMethod.js";
+import Review from "../models/Review.js";
+import Room from "../models/Room.js";
+import User from "../models/User.js";
 
 const seedDatabase = async () => {
   await connectDB();
@@ -35,14 +34,20 @@ const seedDatabase = async () => {
     const france = await Country.create({ name: "France", code: "FR" });
     const germany = await Country.create({ name: "Germany", code: "DE" });
     const japan = await Country.create({ name: "Japan", code: "JP" });
-    const southKorea = await Country.create({ name: "South Korea", code: "KR" });
+    const southKorea = await Country.create({
+      name: "South Korea",
+      code: "KR",
+    });
     const australia = await Country.create({ name: "Australia", code: "AU" });
     const india = await Country.create({ name: "India", code: "IN" });
-    
 
     // Thêm Thành phố
     const hanoi = await City.create({ name: "Hà Nội", code: "HN", image: "" });
-    const danang = await City.create({ name: "Đà Nẵng", code: "DN", image: "" });
+    const danang = await City.create({
+      name: "Đà Nẵng",
+      code: "DN",
+      image: "",
+    });
 
     // Thêm Người dùng
     const user1 = await User.create({
@@ -67,6 +72,7 @@ const seedDatabase = async () => {
     // Thêm Khách Sạn
     const hotel1 = await Hotel.create({
       hotelCode: 1001,
+      propertyType: "Hotel",
       title: "Hotel Hanoi Luxury",
       subtitle: "Khách sạn 5 sao trung tâm Hà Nội",
       description: "Khách sạn cao cấp với tiện nghi hiện đại",

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from 'assests/logos/stay_booker_logo.png';
 import HamburgerMenu from 'components/hamburger-menu/HamburgerMenu';
 import DropdownButton from 'components/ux/dropdown-button/DropdownButton';
-import AuthContext from 'contexts/AuthContext';
+import { AuthContext } from 'contexts/AuthContext';
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
