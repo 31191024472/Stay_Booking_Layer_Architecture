@@ -1,4 +1,4 @@
-import revenueService from "../services/revenueService.js";
+import revenueService from "../services/adminRevenueService.js";
 
 export const getRevenueStatistics = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ export const getRevenueStatistics = async (req, res) => {
         .json({ success: false, message: "Filter is required" });
     }
 
-    const revenueData = await revenueService.getRevenueStatistics(filter);
+    const revenueData = await revenueService.getRevenue(filter);
     res.json({ success: true, revenueData });
   } catch (error) {
     console.error("Lỗi thống kê doanh thu:", error);

@@ -1,7 +1,7 @@
 import bookingRepository from "../repositories/adminRevenueRepository.js";
 
 class RevenueService {
-  async getRevenueStatistics(filter) {
+  async getRevenue(filter) {
     // Xác định cách nhóm theo thời gian
     let groupFormat;
     if (filter === "day") {
