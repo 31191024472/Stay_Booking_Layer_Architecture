@@ -23,19 +23,6 @@ import HotelDetails from './routes/hotel-details/HotelDetails';
 import BaseLayout from './routes/layouts/base-layout/BaseLayout';
 import Login from './routes/login/Login';
 import Register from './routes/register/Register';
-import AboutUs from './routes/about-us/AboutUs';
-import BaseLayout from './routes/layouts/base-layout/BaseLayout';
-import ForgotPassword from './routes/forgot-password/ForgotPassword';
-import Checkout from 'routes/checkout/Checkout';
-import BookingConfirmation from 'routes/booking-confimation/BookingConifrmation';
-import AdminLayout from 'routes/admin/AdminLayout'
-import AdminDashboard from 'routes/admin/AdminDashboard';
-import UserManagement from 'routes/admin/UserManagement';
-import BookingManagement from 'routes/admin/BookingManagement';
-import HotelManagement from 'routes/admin/HotelManagement';
-import EmailPromotion from 'routes/admin/AdminNotification';
-import RoomManagement from 'routes/admin/RoomManagement';
-import ProtectedRoute from "routes/admin/ProtectedRoute"
 // if (process.env.NODE_ENV === 'development') {
 //   makeServer();
 // }
