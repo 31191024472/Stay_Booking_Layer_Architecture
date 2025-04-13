@@ -7,7 +7,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASSWORD
     }
 });
-
 export const sendMail = async (to, subject, text) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,

@@ -24,7 +24,6 @@ router.get('/verticalFilters', getHotelFilters);
 router.get('/', getHotels);
 
 // ✅ Các API dynamic liên quan đến hotelCode (chi tiết, review)
-// Review phải đặt trước hotelCode
 router.get('/:hotelCode/reviews', getHotelReview);
 router.post('/:hotelCode/reviews', authMiddleware, addHotelReview);
 router.get('/:hotelCode/booking/enquiry', getHotelBookingDetails);
