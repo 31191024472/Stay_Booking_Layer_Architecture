@@ -13,18 +13,29 @@ export const createBooking = async (req, res) => {
       billingAddress: req.body.billingAddress,
       isDefault: true
     });
+    function convertDate(dateString) {
+      const parts = dateString.split('-'); // Tách theo dấu "-"
+      return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); // Đổi thành "yyyy-MM-dd"
+    }
+   // Kiểm tra và chuyển đổi ngày tháng
+   const checkInDate = convertDate(req.body.checkIn);
+   const checkOutDate = convertDate(req.body.checkOut);
 
+   // Kiểm tra tính hợp lệ của ngày
+   if (isNaN(checkInDate) || isNaN(checkOutDate)) {
+     return res.status(400).json({ success: false, message: "Ngày không hợp lệ" });
+   }    
     // Tạo booking mới
     const booking = await bookingService.createBooking({
       userId: req.user._id,
       hotelId: req.body.hotelId,
-      checkIn: new Date(req.body.checkIn),
-      checkOut: new Date(req.body.checkOut),
+      checkIn: checkInDate,  // Đảm bảo ngày đúng định dạng
+      checkOut: checkOutDate, // Đảm bảo ngày đúng định dạng
       guests: req.body.guests,
-      rooms: req.body.rooms,
-      roomType: req.body.roomType,
+      rooms: req.body.rooms || 1,  // Mặc định là 1 nếu không có giá trị
+      roomId: req.body.roomId, 
       totalPrice: req.body.totalPrice,
-      paymentMethodId: paymentMethod._id
+      paymentMethodId: paymentMethod._id,
     });
     
     res.json({ 

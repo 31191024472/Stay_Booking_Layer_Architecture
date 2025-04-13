@@ -47,7 +47,8 @@ const ProfileDetailsPanel = ({ userDetails }) => {
       firstName === userDetails.firstName &&
       lastName === userDetails.lastName &&
       phoneNumber === userDetails.phone &&
-      nationality === userDetails.country
+      nationality === userDetails.country &&
+      dateOfBirth === userDetails.dateOfBirth // Kiểm tra nếu ngày tháng năm sinh cũng không thay đổi
     ) {
       setIsEditMode(false);
       return;
@@ -56,18 +57,23 @@ const ProfileDetailsPanel = ({ userDetails }) => {
     const updatedUserDetails = {
       firstName,
       lastName,
-      phoneNumber,
+      phone: phoneNumber,
       country: nationality,
+      dateOfBirth,
     };
+
     // Gọi API để cập nhật thông tin người dùng
     const response = await networkAdapter.patch(
       '/api/users/update-profile',
       updatedUserDetails
     );
-    if (response && response.data.status) {
+    console.log("Updated details gửi lên:", updatedUserDetails);
+    console.log("Response từ server:", response);
+    
+    if (response) {
       setToastMessage({
         type: 'success',
-        message: response.data.status,
+        message: "Cập nhật thông tin thành công",
       });
     } else {
       // Khôi phục về trạng thái ban đầu
@@ -75,6 +81,7 @@ const ProfileDetailsPanel = ({ userDetails }) => {
       setLastName(userDetails.lastName);
       setPhoneNumber(userDetails.phone);
       setNationality(userDetails.country);
+      setDateOfBirth(userDetails.dateOfBirth); // Khôi phục lại ngày tháng năm sinh nếu có lỗi
       setToastMessage({
         type: 'error',
         message: 'Oops, đã xảy ra lỗi. Vui lòng thử lại sau.',
@@ -84,6 +91,7 @@ const ProfileDetailsPanel = ({ userDetails }) => {
     setIsEditMode(false);
   };
 
+
   // Effect để thiết lập trạng thái ban đầu của thông tin người dùng
   useEffect(() => {
     if (userDetails) {
@@ -91,7 +99,7 @@ const ProfileDetailsPanel = ({ userDetails }) => {
       setLastName(userDetails.lastName || '');
       setEmail(userDetails.email || '');
       setPhoneNumber(userDetails.phone || '');
-      setNationality(userDetails.country || '');
+      setNationality(userDetails.countryId || '');
       setIsEmailVerified(userDetails.isEmailVerified || '');
       setIsPhoneVerified(userDetails.isPhoneVerified || '');
       setDateOfBirth(userDetails.dateOfBirth || '');
@@ -100,12 +108,12 @@ const ProfileDetailsPanel = ({ userDetails }) => {
 
   useEffect(() => {
     const fetchCountries = async () => {
-      const countriesData = await fetch('http://localhost:5000/api/misc/countries');
+      const countriesData = await networkAdapter.get('/api/misc/countries');
       if (countriesData && countriesData.data) {
         console.log('countriesData', countriesData.data);
         const mappedValues = countriesData.data.elements.map((country) => ({
           label: country.name,
-          value: country.name,
+          value: country._id,
         }));
         setCountries(mappedValues);
       }
@@ -177,9 +185,25 @@ const ProfileDetailsPanel = ({ userDetails }) => {
               />
               <DisplayField
                 label="Ngày sinh"
-                value={dateOfBirth || 'Nhập ngày sinh của bạn'}
+                value={
+                  dateOfBirth
+                    ? new Date(dateOfBirth).toLocaleDateString('vi-VN', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                    : 'Nhập ngày sinh của bạn'
+                }
               />
-              <DisplayField label="Quốc tịch" value={nationality} />
+
+              <DisplayField
+                label="Quốc tịch"
+                value={
+                  // Tìm quốc gia trong danh sách countries dựa trên ID
+                  countries.find((country) => country.value === nationality)?.label || 'Chưa có quốc tịch'
+                }
+              />
+
             </>
           )}
         </dl>
@@ -224,9 +248,8 @@ const ProfileDetailsPanel = ({ userDetails }) => {
 
 const DisplayField = ({ label, value, verified }) => (
   <div
-    className={`bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${
-      verified ? 'bg-gray-50' : ''
-    }`}
+    className={`bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${verified ? 'bg-gray-50' : ''
+      }`}
   >
     <dt className="font-medium text-gray-500">{label}</dt>
     <dd className="mt-1 text-gray-900 sm:mt-0 sm:col-span-2">

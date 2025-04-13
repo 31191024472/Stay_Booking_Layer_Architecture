@@ -132,8 +132,7 @@ const Checkout = () => {
         checkIn: searchParams.get('checkIn'),
         checkOut: searchParams.get('checkOut'),
         guests: parseInt(searchParams.get('guests')),
-        rooms: parseInt(searchParams.get('rooms')),
-        roomType: searchParams.get('roomType'),
+        roomId: searchParams.get('roomType'),
         totalPrice: parseFloat(searchParams.get('totalPrice')),
         paymentDetails: {
           cardNumber: formData.cardNumber.replace(/\s/g, '').slice(-4),
@@ -148,7 +147,7 @@ const Checkout = () => {
           postalCode: formData.postalCode
         }
       };
-
+      console.log("Check booking data", bookingData)
       // Lấy token từ localStorage
       const token = localStorage.getItem('token');
       if (!token) {

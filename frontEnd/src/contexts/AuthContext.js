@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { networkAdapter } from 'services/NetworkAdapter';
 
 export const AuthContext = createContext();
@@ -12,39 +12,33 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [authCheckTrigger, setAuthCheckTrigger] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
         const response = await networkAdapter.get('api/users/auth-user');
-        // console.log("Auth check response:", response);
-        if (response && response.data) {
+        console.log('Auth check response:', response.userDetails.role);
+        if (response.success) {
           setIsAuthenticated(response.success);
-          setUserDetails(response.data);
+          setUserDetails(response.userDetails);
         } else {
           setIsAuthenticated(false);
           setUserDetails(null);
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        console.error('Auth check error:', error);
         setIsAuthenticated(false);
         setUserDetails(null);
-      } finally {
-        setLoading(false); 
       }
     };
 
     checkAuthStatus();
   }, [authCheckTrigger]);
 
-  // useEffect(() => {
-  //   console.log("🧾 userDetails updated:", userDetails);
-  // }, [userDetails]);
-
   const triggerAuthCheck = async () => {
     setAuthCheckTrigger((prev) => !prev);
-    await new Promise(resolve => setTimeout(resolve, 100)); // Đảm bảo state được cập nhật
+    // Đợi một chút để đảm bảo state đã được cập nhật
+    await new Promise((resolve) => setTimeout(resolve, 100));
   };
 
   return (
@@ -54,7 +48,6 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated,
         setUserDetails,
         userDetails,
-        loading,
         triggerAuthCheck,
       }}
     >

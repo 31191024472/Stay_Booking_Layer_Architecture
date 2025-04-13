@@ -35,6 +35,7 @@ const findByUUID = async (uuid) => {
 };
 // ✅ Cập nhật hồ sơ người dùng
  const updateUser = (userId, updateData) => {
+    console.log("Check data usser from updateuser repositoy", updateData)
     return User.findByIdAndUpdate(userId, updateData, { new: true });
 };
 

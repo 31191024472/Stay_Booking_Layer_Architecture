@@ -18,6 +18,7 @@ const Login = () => {
 
   const [errorMessage, setErrorMessage] = useState(false);
 
+
   const handleInputChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
@@ -32,14 +33,24 @@ const Login = () => {
     }
     console.log('Login data:', loginData);
     try {
-      const response = await networkAdapter.post("api/users/login", loginData);
-      console.log("Login response:", response);
-  
-      if (response.success && response.token) {
-        // 1. Lưu token
-        localStorage.setItem("token", response.token);
-  
-        // 2. Gọi lại auth-user để lấy thông tin người dùng
+
+      const response = await networkAdapter.post('api/users/login', loginData);
+      console.log('Login response:', response); // Thêm log để debug
+
+      if (response.success) {
+        // 1. Lưu token vào localStorage
+        localStorage.setItem('token', response.token);
+        localStorage.setItem(
+          'userDetails',
+          JSON.stringify(response.userDetails)
+        );
+        localStorage.setItem('isAuthenticated', response.isAuthenticated);
+
+        // 2. Cập nhật trạng thái xác thực
+        context.setIsAuthenticated(true);
+        context.setUserDetails(response.userDetails);
+
+        // 3. Kích hoạt kiểm tra xác thực
         await context.triggerAuthCheck();
         if (context.loading) {
           setErrorMessage("Đang kiểm tra thông tin người dùng...");
@@ -47,18 +58,18 @@ const Login = () => {
         }
         // 3. Chuyển hướng thông minh
         setTimeout(() => {
-          const { userDetails } = context;
-          const fromPage = location.state?.from;
-        
+          const { userDetails } = context;        
           if (userDetails?.role === "admin") {
             navigate("/admin"); 
           } else {
+            const fromPage = location.state?.from;
             if (fromPage && fromPage.includes("/hotel/")) {
               navigate(fromPage); 
             } else {
-              navigate("/user-profile"); 
+              navigate("/user-profile");
             }
           }
+          
         }, 100);
         
       } else {

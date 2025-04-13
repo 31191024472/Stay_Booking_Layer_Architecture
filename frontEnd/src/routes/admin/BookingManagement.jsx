@@ -26,9 +26,7 @@ const BookingManagement = () => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/admin/bookings/${id}`,
-        {
-          status,
-        }
+        { status }
       );
 
       const updatedBookings = bookings.map((booking) =>
@@ -42,15 +40,15 @@ const BookingManagement = () => {
     }
   };
 
-  const handleCancelBooking = async (id) => {
+  const handleDeleteBooking = async (id) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xoá booking này?')) return;
+
     try {
-      await axios.put(`http://localhost:5000/api/admin/bookings/${id}/cancel`);
-      const updatedBookings = bookings.map((booking) =>
-        booking._id === id ? { ...booking, status: 'Cancelled' } : booking
-      );
+      await axios.delete(`http://localhost:5000/api/admin/bookings/${id}`);
+      const updatedBookings = bookings.filter((booking) => booking._id !== id);
       setBookings(updatedBookings);
     } catch (error) {
-      console.error('Lỗi khi hủy booking', error);
+      console.error('Lỗi khi xoá booking', error);
     }
   };
 
@@ -79,8 +77,8 @@ const BookingManagement = () => {
                 <td className="p-2">
                   {new Date(booking.checkIn).toLocaleDateString()}
                 </td>
-                <td className="p-2">{booking.hotelId?.title || 'N/A'}</td>
-                <td className="p-2">{booking.roomType}</td>
+                <td className="p-2">{booking.hotelTitle || 'N/A'}</td>
+                <td className="p-2">{booking.roomType || 'N/A'}</td>
                 <td className="p-2">{booking.rooms}</td>
                 <td className="p-2">
                   {booking.totalPrice.toLocaleString()} VND
@@ -99,14 +97,12 @@ const BookingManagement = () => {
                   </select>
                 </td>
                 <td className="p-2">
-                  {booking.status !== 'Cancelled' && (
-                    <button
-                      onClick={() => handleCancelBooking(booking._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded"
-                    >
-                      Hủy
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleDeleteBooking(booking._id)}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Xoá
+                  </button>
                 </td>
               </tr>
             ))}

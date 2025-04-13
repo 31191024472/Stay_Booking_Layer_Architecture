@@ -12,7 +12,12 @@ const bookingSchema = new mongoose.Schema(
     checkOut: { type: Date, required: true },
     guests: { type: Number, required: true },
     rooms: { type: Number, required: true },
-    roomType: { type: String, required: true },
+    roomId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+      required: true,
+    },
+
     totalPrice: { type: Number, required: true },
     paymentMethodId: {
       type: mongoose.Schema.Types.ObjectId,
