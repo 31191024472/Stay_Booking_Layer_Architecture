@@ -22,7 +22,8 @@ const HotelManagement = () => {
         const response = await axios.get(
           'http://localhost:5000/api/admin/hotels'
         );
-        setHotels(response.data.data);
+        setHotels(response.data.hotels);
+        //console.log('Danh sách khách sạn:', response);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách khách sạn', error);
       } finally {

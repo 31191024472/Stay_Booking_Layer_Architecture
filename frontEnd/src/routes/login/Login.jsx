@@ -55,10 +55,15 @@ const Login = () => {
       if (response.success) {
         // 1. Lưu token vào localStorage
         localStorage.setItem('token', response.token);
+        localStorage.setItem(
+          'userDetails',
+          JSON.stringify(response.userDetails)
+        );
+        localStorage.setItem('isAuthenticated', response.isAuthenticated);
 
         // 2. Cập nhật trạng thái xác thực
         context.setIsAuthenticated(true);
-        context.setUserDetails(response.data);
+        context.setUserDetails(response.userDetails);
 
         // 3. Kích hoạt kiểm tra xác thực
         await context.triggerAuthCheck();
@@ -71,7 +76,9 @@ const Login = () => {
             navigate(location.state.from);
           } else {
             // Nếu không phải từ trang đặt phòng, chuyển về trang profile
-            navigate('/user-profile');
+            navigate(
+              response.userDetails.role === 'admin' ? '/admin/dashboard' : '/'
+            ); // ✅ Điều hướng sau khi đăng nhập thành công
           }
         }, 100);
       } else {

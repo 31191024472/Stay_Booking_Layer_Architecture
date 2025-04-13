@@ -1,16 +1,18 @@
 import express from "express";
 import {
-  cancelBooking,
   createBooking,
+  deleteBooking,
+  getAllBookings,
   getBookingById,
-  getBookings,
+  updateBooking,
 } from "../controllers/adminBookingController.js";
 
 const router = express.Router();
 
-router.get("/", getBookings);
+router.get("/", getAllBookings);
 router.get("/:id", getBookingById);
 router.post("/", createBooking);
-router.put("/:id/cancel", cancelBooking);
+router.put("/:id", updateBooking);
+router.delete("/:id", deleteBooking); // Xoá booking
 
 export default router;

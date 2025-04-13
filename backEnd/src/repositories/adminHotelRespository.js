@@ -1,8 +1,8 @@
 import Hotel from "../models/Hotel.js";
 
-export const getAllHotels = () => Hotel.find();
+export const getAllHotels = () => Hotel.find().populate("cityId");
 
-export const getHotelById = (id) => Hotel.findById(id);
+export const getHotelById = (id) => Hotel.findById(id).populate("cityId");
 
 export const createHotel = (data) => new Hotel(data).save();
 

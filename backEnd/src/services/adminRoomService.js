@@ -1,5 +1,5 @@
 import roomRepository from "../repositories/adminRoomRespository.js";
-import uploadImageToCloudinary from "../utils/cloudinaryHelper.js";
+import { uploadImageToCloudinary } from "../utils/cloudinaryHelper.js";
 
 const getRooms = async () => {
   return await roomRepository.getAllRooms();

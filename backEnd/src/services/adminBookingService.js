@@ -1,48 +1,73 @@
-import Room from "../models/Room.js";
-import * as bookingRepo from "../repositories/adminBookingRespository.js";
+import * as BookingRepo from "../repositories/adminBookingRespository.js";
 
-export const getAllBookings = async () => await bookingRepo.getAllBookings();
-
-export const getBookingById = async (id) =>
-  await bookingRepo.getBookingById(id);
-
-export const createBooking = async (bookingData) => {
-  const { hotelId, roomType, rooms } = bookingData;
-
-  // Kiểm tra phòng có đủ không
-  const room = await Room.findOne({ hotelId, roomType });
-  if (!room || room.availableRooms < rooms) {
-    throw new Error("Loại phòng không khả dụng hoặc không đủ số lượng");
-  }
-
-  const newBooking = await bookingRepo.createBooking(bookingData);
-
-  // Cập nhật số phòng còn lại
-  room.availableRooms -= rooms;
-  await room.save();
-
-  return newBooking;
+export const getAllBookings = async () => {
+  return await BookingRepo.findAllBookings();
 };
 
-export const updateBooking = async (id, data) =>
-  await bookingRepo.updateBooking(id, data);
+export const getBookingDetails = async (id) => {
+  const booking = await BookingRepo.findBookingById(id);
+  if (!booking) throw new Error("Không tìm thấy booking");
+  return booking;
+};
 
-export const cancelBooking = async (id) => {
-  const booking = await bookingRepo.getBookingById(id);
-  if (!booking) throw new Error("Booking không tồn tại");
+export const createNewBooking = async (data) => {
+  const {
+    userId,
+    hotelId,
+    checkIn,
+    checkOut,
+    guests,
+    rooms,
+    roomType,
+    totalPrice,
+    paymentMethodId,
+  } = data;
 
-  booking.status = "Cancelled";
-  await booking.save();
+  const hotel = await BookingRepo.findHotelById(hotelId);
+  if (!hotel) throw new Error("Khách sạn không tồn tại");
 
-  // Hoàn lại số phòng
-  const room = await Room.findOne({
-    hotelId: booking.hotelId,
-    roomType: booking.roomType,
+  const room = await BookingRepo.findRoomByTypeAndHotel(hotelId, roomType);
+  if (!room || room.availableRooms < rooms)
+    throw new Error("Loại phòng không khả dụng hoặc không đủ số lượng");
+
+  const booking = await BookingRepo.createBooking({
+    userId,
+    hotelId,
+    checkIn,
+    checkOut,
+    guests,
+    rooms,
+    roomType,
+    totalPrice,
+    paymentMethodId,
   });
-  if (room) {
-    room.availableRooms += booking.rooms;
-    await room.save();
-  }
+
+  room.availableRooms -= rooms;
+  await BookingRepo.updateRoomAvailability(room);
 
   return booking;
+};
+
+export const updateBooking = async (id, data) => {
+  const booking = await BookingRepo.updateBookingById(id, data);
+  if (!booking) throw new Error("Booking không tồn tại");
+  return booking;
+};
+
+export const deleteBooking = async (id) => {
+  const booking = await BookingRepo.findBookingRawById(id);
+  if (!booking) throw new Error("Không tìm thấy booking");
+
+  // Hoàn lại phòng trước khi xoá booking
+  const room = await BookingRepo.findRoomByTypeAndHotel(
+    booking.hotelId,
+    booking.roomType
+  );
+  if (room) {
+    room.availableRooms += booking.rooms;
+    await BookingRepo.updateRoomAvailability(room);
+  }
+
+  await BookingRepo.deleteBookingById(id);
+  return { message: "Booking đã được xoá", deletedBookingId: id };
 };
