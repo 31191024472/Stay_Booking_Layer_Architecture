@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 
 const RoomManagement = () => {
   const [rooms, setRooms] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRoom, setNewRoom] = useState({
-    hotelId: '',
+    hotelCode: '', // Thay đổi từ hotelId thành hotelCode
     roomType: 'Standard',
     description: '',
     pricePerNight: 0,
@@ -18,7 +19,7 @@ const RoomManagement = () => {
     discount: 0,
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [editingRoomId, setEditingRoomId] = useState(null); // ID của phòng đang chỉnh sửa
+  const [editingRoomId, setEditingRoomId] = useState(null);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -34,8 +35,30 @@ const RoomManagement = () => {
       }
     };
 
+    const fetchHotels = async () => {
+      try {
+        const hotelResponse = await axios.get(
+          'http://localhost:5000/api/admin/hotels' // Giả sử API này trả về danh sách khách sạn
+        );
+        console.log('Dữ liệu khách sạn:', hotelResponse);
+        setHotels(hotelResponse.data.hotels);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách khách sạn', error);
+      }
+    };
+
     fetchRooms();
+    fetchHotels();
   }, []);
+
+  // Tìm tên khách sạn theo hotelCode
+  const getHotelNameByCode = (hotelCode) => {
+    if (!hotels || hotels.length === 0) {
+      return 'Không tìm thấy khách sạn'; // Trả về khi chưa có dữ liệu khách sạn
+    }
+    const hotel = hotels.find((h) => h.hotelCode === hotelCode);
+    return hotel ? hotel.title : 'Không tìm thấy khách sạn';
+  };
 
   const handleFileChange = (e) => {
     setSelectedFiles(Array.from(e.target.files));
@@ -73,7 +96,7 @@ const RoomManagement = () => {
         setRooms([...rooms, response.data.data]);
         alert('Phòng đã được tạo!');
       }
-      resetForm(); // Reset form sau khi cập nhật hoặc thêm phòng
+      resetForm(); // Reset form sau khi thêm hoặc cập nhật phòng
     } catch (error) {
       console.error('Lỗi khi lưu phòng', error);
     }
@@ -81,7 +104,7 @@ const RoomManagement = () => {
 
   const handleEditRoom = (room) => {
     setNewRoom({
-      hotelId: room.hotelId,
+      hotelCode: room.hotelCode, // Cập nhật hotelCode thay vì hotelId
       roomType: room.roomType,
       description: room.description,
       pricePerNight: room.pricePerNight,
@@ -109,7 +132,7 @@ const RoomManagement = () => {
 
   const resetForm = () => {
     setNewRoom({
-      hotelId: '',
+      hotelCode: '', // Thay thế hotelId bằng hotelCode
       roomType: 'Standard',
       description: '',
       pricePerNight: 0,
@@ -132,10 +155,12 @@ const RoomManagement = () => {
       {/* Form thêm/sửa phòng */}
       <form className="mb-4 space-y-2">
         <input
-          type="text"
-          placeholder="ID Khách sạn"
-          value={newRoom.hotelId}
-          onChange={(e) => setNewRoom({ ...newRoom, hotelId: e.target.value })}
+          type="number"
+          placeholder="Mã khách sạn"
+          value={newRoom.hotelCode} // Dùng hotelCode thay vì hotelId
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, hotelCode: e.target.value })
+          }
           className="border p-2 block w-full"
         />
 
@@ -216,6 +241,7 @@ const RoomManagement = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
+              <th className="border p-2">Khách sạn</th>
               <th className="border p-2">Loại phòng</th>
               <th className="border p-2">Giá</th>
               <th className="border p-2">Giảm giá</th>
@@ -226,6 +252,7 @@ const RoomManagement = () => {
           <tbody>
             {rooms.map((room) => (
               <tr key={room._id} className="border">
+                <td className="p-2">{getHotelNameByCode(room.hotelCode)}</td>
                 <td className="p-2">{room.roomType}</td>
                 <td className="p-2">{room.pricePerNight} VND</td>
                 <td className="p-2">{room.discount.percentage}%</td>

@@ -1,73 +1,78 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const roomSchema = new mongoose.Schema({
-  hotelId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hotel',
-    required: true
+  hotelCode: {
+    type: String,
+    required: true,
+    ref: "Hotel",
   },
+
   roomType: {
     type: String,
     required: true,
-    enum: ['Standard', 'Deluxe', 'Suite', 'Executive']
+    enum: ["Standard", "Deluxe", "Suite", "Executive"],
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   pricePerNight: {
     type: Number,
-    required: true
+    required: true,
   },
   maxOccupancy: {
     type: Number,
     required: true,
-    default: 2
+    default: 2,
   },
   bedType: {
     type: String,
-    required: true
+    required: true,
   },
-  amenities: [{
-    type: String
-  }],
+  amenities: [
+    {
+      type: String,
+    },
+  ],
   totalRooms: {
     type: Number,
     required: true,
-    default: 1
+    default: 1,
   },
   availableRooms: {
     type: Number,
     required: true,
-    default: 1
+    default: 1,
   },
-  imageUrls: [{
-    type: String
-  }],
+  imageUrls: [
+    {
+      type: String,
+    },
+  ],
   isActive: {
     type: Boolean,
-    default: true
+    default: true,
   },
   discount: {
     percentage: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Cập nhật updatedAt trước khi lưu
-roomSchema.pre('save', function(next) {
+roomSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-export default mongoose.model('Room', roomSchema);
+export default mongoose.model("Room", roomSchema);

@@ -15,6 +15,7 @@ const HotelManagement = () => {
     benefits: '',
     images: [],
   });
+  const [cities, setCities] = useState([]);
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -32,6 +33,19 @@ const HotelManagement = () => {
     };
 
     fetchHotels();
+  }, []);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/admin/cities');
+        setCities(res.data.cities); // Điều này giả định rằng API trả về { cities: [...] }
+      } catch (err) {
+        console.error('Lỗi khi lấy danh sách thành phố:', err);
+      }
+    };
+
+    fetchCities();
   }, []);
 
   const handleFileChange = (e) => {
@@ -73,9 +87,13 @@ const HotelManagement = () => {
     formData.append('propertyType', selectedHotel.propertyType);
     formData.append('cityId', selectedHotel.cityId);
     formData.append('benefits', selectedHotel.benefits);
-    Array.from(selectedHotel.images || []).forEach((file) =>
-      formData.append('images', file)
-    );
+
+    // Nếu người dùng chọn ảnh mới, thì mới append vào
+    if (selectedHotel.images && selectedHotel.images.length > 0) {
+      Array.from(selectedHotel.images).forEach((file) =>
+        formData.append('images', file)
+      );
+    }
 
     try {
       const response = await axios.put(
@@ -159,9 +177,7 @@ const HotelManagement = () => {
           ))}
         </select>
 
-        <input
-          type="text"
-          placeholder="Thành phố (ID)"
+        <select
           value={selectedHotel?.cityId || newHotel.cityId}
           onChange={(e) =>
             selectedHotel
@@ -169,7 +185,15 @@ const HotelManagement = () => {
               : setNewHotel({ ...newHotel, cityId: e.target.value })
           }
           className="border p-2 block w-full"
-        />
+        >
+          <option value="">-- Chọn thành phố --</option>
+          {cities.map((city) => (
+            <option key={city._id} value={city._id}>
+              {city.name}
+            </option>
+          ))}
+        </select>
+
         <input
           type="text"
           placeholder="Lợi ích (cách nhau bằng dấu phẩy)"
@@ -228,7 +252,7 @@ const HotelManagement = () => {
             {hotels.map((hotel) => (
               <tr key={hotel._id} className="border">
                 <td className="p-2">
-                  {hotel.imageUrls?.length > 0 ? (
+                  {hotel?.imageUrls && hotel.imageUrls.length > 0 ? (
                     <img
                       src={hotel.imageUrls[0]}
                       alt={hotel.title}
@@ -244,7 +268,12 @@ const HotelManagement = () => {
                 <td className="p-2">{hotel.cityId?.name || 'N/A'}</td>
                 <td className="p-2">
                   <button
-                    onClick={() => setSelectedHotel(hotel)}
+                    onClick={() =>
+                      setSelectedHotel({
+                        ...hotel,
+                        cityId: hotel.cityId?._id || hotel.cityId, // Đảm bảo cityId là string _id
+                      })
+                    }
                     className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
                   >
                     Sửa

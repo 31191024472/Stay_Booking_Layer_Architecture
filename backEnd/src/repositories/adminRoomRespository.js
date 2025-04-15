@@ -1,8 +1,8 @@
 import Room from "../models/Room.js";
 
-const getAllRooms = () => Room.find().populate("hotelId", "title");
+const getAllRooms = () => Room.find();
 
-const getRoomById = (id) => Room.findById(id).populate("hotelId", "title");
+const getRoomById = (id) => Room.findById(id);
 
 const createRoom = (roomData) => new Room(roomData).save();
 
