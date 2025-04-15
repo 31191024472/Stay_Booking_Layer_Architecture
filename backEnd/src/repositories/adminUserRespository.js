@@ -2,7 +2,9 @@ import User from "../models/User.js";
 
 class UserRepository {
   async getAllUsers() {
-    return await User.find().populate("countryId", "name").select("-password");
+    return await User.find()
+      .populate("countryId", "name")
+      .select("-password_hash");
   }
 
   async findUserByEmail(email) {
