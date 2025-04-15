@@ -326,7 +326,7 @@ const RoomManagement = () => {
                 </td>
                 <td className="border p-2">
                   <div className="flex gap-2 flex-wrap">
-                    {room.images?.map((img, index) => (
+                    {room.imageUrls?.map((img, index) => (
                       <img
                         key={index}
                         src={img}
