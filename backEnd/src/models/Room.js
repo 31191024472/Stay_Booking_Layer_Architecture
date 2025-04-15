@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const roomSchema = new mongoose.Schema({
   hotelCode: {
-    type: String,
+    type: Number,
     required: true,
     ref: "Hotel",
   },
