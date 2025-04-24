@@ -101,13 +101,6 @@ npm start
 ![Screenshot 2025-03-20 135526](https://github.com/user-attachments/assets/b343452b-dae2-4033-a6b5-e12a7b07abab)
 ![Screenshot 2025-04-02 224356](https://github.com/user-attachments/assets/967c5758-319c-49f2-aa52-fcf8db1f56b0)
 ![Screenshot 2025-04-02 225413](https://github.com/user-attachments/assets/b4567804-8a84-4896-9f49-d12a64437d53)
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/b15dcd54-e751-489e-b60c-682c8175e27c)
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/defd9650-75ef-4bfe-a8e7-3df8044165bd)
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/32dcb41d-8943-4d68-a6ae-cab3dccd1584)
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/298acc6b-7f19-40bc-a6aa-4c7a508e9bd5)
-
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/6e775597-e9b1-4d00-94c6-02972eb4a609)
-![Screenshot 2025-04-05 190455](https://github.com/user-attachments/assets/35eac77a-85b2-4669-91c2-bc33da4f0d9f)
 
 
 
