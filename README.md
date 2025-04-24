@@ -96,5 +96,7 @@ npm start
 ✅ Đánh giá khách sạn
 ✅ Hệ thống thông báo đặt phòng qua email
 
+## Giao diện
 
+![Screenshot 2025-03-20 135526](https://github.com/user-attachments/assets/b343452b-dae2-4033-a6b5-e12a7b07abab)
 
