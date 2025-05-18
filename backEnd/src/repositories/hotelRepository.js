@@ -2,7 +2,9 @@ import Hotel from '../models/Hotel.js';
 import City from '../models/City.js';
 import Review from '../models/Review.js';
 import Booking from '../models/Booking.js';
+import Room from '../models/Room.js';
 import mongoose from "mongoose";
+import { AppError } from '../utils/errorHandler.js';
 
 class HotelRepository {
   async findAllHotels() {
@@ -15,67 +17,35 @@ class HotelRepository {
 
   async createHotel(hotelData) {
     try {
-      const hotel = new Hotel({
-        ...hotelData,
-        status: 'pending',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+      const hotel = new Hotel(hotelData);
       return await hotel.save();
     } catch (error) {
-      console.error('Error in HotelRepository.createHotel:', error);
-      throw error;
+      throw new AppError('Lỗi khi tạo khách sạn mới', 500);
     }
   }
 
-  async updateHotel(hotelId, updateData) {
+  async findLastHotel() {
+    return await Hotel.findOne().sort({ hotelCode: -1 });
+  };
+
+
+  async updateHotel(id, updateData) {
     try {
-      const hotel = await Hotel.findById(hotelId);
-      if (!hotel) {
-        throw new Error('Không tìm thấy khách sạn');
-      }
-
-      // Chỉ cho phép cập nhật các trường được phép
-      const allowedUpdates = [
-        'name',
-        'description',
-        'address',
-        'city',
-        'starRating',
-        'amenities',
-        'images'
-      ];
-
-      Object.keys(updateData).forEach(key => {
-        if (allowedUpdates.includes(key)) {
-          hotel[key] = updateData[key];
-        }
-      });
-
-      hotel.updatedAt = new Date();
-      return await hotel.save();
+      return await Hotel.findByIdAndUpdate(id, updateData, { new: true });
     } catch (error) {
-      console.error('Error in HotelRepository.updateHotel:', error);
-      throw error;
+      throw new AppError('Lỗi khi cập nhật khách sạn', 500);
     }
   }
 
-  async deleteHotel(hotelId) {
+
+
+  async deleteHotel(id) {
     try {
-      const hotel = await Hotel.findById(hotelId);
-      if (!hotel) {
-        throw new Error('Không tìm thấy khách sạn');
-      }
-
-      // Chỉ cho phép xóa khách sạn ở trạng thái pending
-      if (hotel.status !== 'pending') {
-        throw new Error('Chỉ có thể xóa khách sạn đang ở trạng thái chờ duyệt');
-      }
-
-      return await Hotel.findByIdAndDelete(hotelId);
+      const result = await Hotel.findByIdAndDelete(id);
+      return result;
     } catch (error) {
-      console.error('Error in HotelRepository.deleteHotel:', error);
-      throw error;
+      console.error('❌ Repository: Lỗi khi xóa khách sạn:', error);
+      throw new AppError('Lỗi khi xóa khách sạn', 500);
     }
   }
 
@@ -132,8 +102,7 @@ class HotelRepository {
     try {
       return await Hotel.findById(id);
     } catch (error) {
-      console.error('Error in HotelRepository.findById:', error);
-      throw error;
+      throw new AppError('Lỗi khi tìm khách sạn', 500);
     }
   }
 
@@ -416,10 +385,11 @@ class HotelRepository {
 
   async findByPartnerId(partnerId) {
     try {
-      return await Hotel.find({ partnerId });
+      const hotels = await Hotel.find({ partner_id: partnerId });
+      return hotels;
     } catch (error) {
-      console.error('Error in HotelRepository.findByPartnerId:', error);
-      throw error;
+      console.error('❌ Repository: Lỗi khi tìm khách sạn:', error);
+      throw new AppError('Lỗi khi tìm khách sạn', 500);
     }
   }
 }

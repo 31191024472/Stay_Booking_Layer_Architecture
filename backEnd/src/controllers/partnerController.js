@@ -20,75 +20,107 @@ export const getHotels = async (req, res) => {
 
 export const createHotel = async (req, res) => {
   try {
-    const validation = validateRequest(req.body, {
-      name: 'required|string',
-      address: 'required|string',
-      city: 'required|string',
-      description: 'required|string',
-      starRating: 'required|numeric|min:1|max:5',
-      amenities: 'array',
-      images: 'array'
-    });
-
-    if (!validation.success) {
-      return res.status(400).json({
-        success: false,
-        message: 'Dữ liệu không hợp lệ',
-        errors: validation.errors
-      });
-    }
 
     const hotel = await partnerService.createHotel(req.user._id, req.body);
-    res.status(201).json({
+
+    return res.status(201).json({
       success: true,
       message: 'Tạo khách sạn thành công, đang chờ duyệt',
       data: hotel
     });
   } catch (error) {
     console.error('🚨 Error in createHotel:', error);
-    res.status(error.statusCode || 500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || 'Lỗi khi tạo khách sạn mới'
     });
   }
 };
 
+
 export const updateHotel = async (req, res) => {
   try {
-    const validation = validateRequest(req.body, {
-      name: 'string',
-      address: 'string',
-      city: 'string',
-      description: 'string',
-      starRating: 'numeric|min:1|max:5',
-      amenities: 'array',
-      images: 'array'
-    });
+    const { hotelId } = req.params;
+    const updateData = req.body;
 
-    if (!validation.success) {
+    // 1. Kiểm tra dữ liệu đầu vào
+    if (!hotelId) {
+      console.error('❌ Thiếu hotelId');
       return res.status(400).json({
         success: false,
-        message: 'Dữ liệu không hợp lệ',
-        errors: validation.errors
+        message: 'Mã khách sạn không được để trống'
       });
     }
 
-    const hotel = await partnerService.updateHotel(
-      req.user._id,
-      req.params.hotelId,
-      req.body
-    );
+    // 2. Kiểm tra các trường bắt buộc
+    const requiredFields = ['title', 'subtitle', 'cityId'];
+    const missingFields = requiredFields.filter(field => !updateData[field]);
+    
+    if (missingFields.length > 0) {
+      console.error('❌ Thiếu trường bắt buộc:', missingFields);
+      return res.status(400).json({
+        success: false,
+        message: `Thiếu các trường bắt buộc: ${missingFields.join(', ')}`
+      });
+    }
 
-    res.json({
+    // 3. Validate dữ liệu
+    if (updateData.ratings && (updateData.ratings < 0 || updateData.ratings > 5)) {
+      console.error('❌ Đánh giá không hợp lệ');
+      return res.status(400).json({
+        success: false,
+        message: 'Đánh giá phải từ 0 đến 5'
+      });
+    }
+
+    if (updateData.benefits && !Array.isArray(updateData.benefits)) {
+      console.error('❌ Benefits phải là mảng');
+      return res.status(400).json({
+        success: false,
+        message: 'Benefits phải là mảng'
+      });
+    }
+
+    if (updateData.imageUrls && !Array.isArray(updateData.imageUrls)) {
+      console.error('❌ imageUrls phải là mảng');
+      return res.status(400).json({
+        success: false,
+        message: 'imageUrls phải là mảng'
+      });
+    }
+
+    // 4. Gọi service để cập nhật
+    const updatedHotel = await partnerService.updateHotel(req.user._id, hotelId, updateData);
+    return res.status(200).json({
       success: true,
       message: 'Cập nhật khách sạn thành công',
-      data: hotel
+      data: updatedHotel
     });
+
   } catch (error) {
-    console.error('🚨 Error in updateHotel:', error);
-    res.status(error.statusCode || 500).json({
+    console.error('❌ Lỗi trong updateHotel:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Mã khách sạn không hợp lệ'
+      });
+    }
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    return res.status(500).json({
       success: false,
-      message: error.message || 'Lỗi khi cập nhật khách sạn'
+      message: 'Lỗi khi cập nhật khách sạn'
     });
   }
 };
@@ -160,78 +192,119 @@ export const getRooms = async (req, res) => {
   }
 };
 
+
 export const createRoom = async (req, res) => {
   try {
-    const validation = validateRequest(req.body, {
-      'basic.name': 'required|string',
-      'basic.type': 'required|string',
-      'basic.capacity': 'required|numeric',
-      'pricing.basePrice': 'required|numeric',
-      'inventory.total': 'required|numeric'
+    console.log('🚀 Controller: Bắt đầu tạo phòng mới:', {
+      hotelId: req.params.hotelId,
+      roomData: req.body
     });
 
-    if (!validation.success) {
-      return res.status(400).json(validation);
-    }
+    // // 1. Validate dữ liệu đầu vào
+    // const validation = validateRequest(req.body, {
+    //   roomType: 'required|string',
+    //   description: 'required|string',
+    //   pricePerNight: 'required|numeric|min:0',
+    //   maxOccupancy: 'required|numeric|min:1',
+    //   bedType: 'required|string',
+    //   amenities: 'required|array',
+    //   totalRooms: 'required|numeric|min:1',
+    //   availableRooms: 'required|numeric|min:0',
+    //   imageUrls: 'array',
+    //   isActive: 'boolean',
+    //   'discount.percentage': 'numeric|min:0|max:100'
+    // });
 
+    // if (!validation.success) {
+    //   console.error('❌ Validation error:', validation);
+    //   return res.status(400).json(validation);
+    // }
+
+    // 2. Gọi service để tạo phòng
     const room = await partnerService.createRoom(
       req.user._id,
       req.params.hotelId,
       req.body
     );
 
-    res.status(201).json({
+    // console.log('✅ Controller: Tạo phòng thành công:', {
+    //   roomId: room._id,
+    //   hotelId: room.hotelId
+    // });
+
+    return res.status(201).json({
       success: true,
+      message: 'Tạo phòng thành công',
       data: room
     });
+
   } catch (error) {
-    console.error('🚨 Error in createRoom:', error);
-    res.status(500).json({
+    console.error('❌ Controller: Lỗi trong createRoom:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+
+    return res.status(error.statusCode || 500).json({
       success: false,
-      message: 'Lỗi khi tạo phòng mới'
+      message: error.message || 'Lỗi khi tạo phòng mới'
     });
   }
 };
 
 export const updateRoom = async (req, res) => {
   try {
-    const validation = validateRequest(req.body, {
-      'basic.name': 'string',
-      'basic.type': 'string',
-      'basic.capacity': 'numeric|min:1',
-      'pricing.basePrice': 'numeric|min:0',
-      'pricing.discount': 'numeric|min:0|max:100',
-      'inventory.total': 'numeric|min:0',
-      'inventory.available': 'numeric|min:0',
-      'amenities': 'array',
-      'images': 'array',
-      'status': 'in:available,unavailable,maintenance'
+    console.log('🚀 Controller: Bắt đầu cập nhật phòng:', {
+      roomId: req.params.roomId,
+      updateData: req.body
     });
 
-    if (!validation.success) {
-      return res.status(400).json(validation);
-    }
+    // // 1. Validate dữ liệu đầu vào
+    // const validation = validateRequest(req.body, {
+    //   roomType: 'string',
+    //   description: 'string',
+    //   pricePerNight: 'numeric|min:0',
+    //   maxOccupancy: 'numeric|min:1',
+    //   bedType: 'string',
+    //   amenities: 'array',
+    //   totalRooms: 'numeric|min:1',
+    //   availableRooms: 'numeric|min:0',
+    //   imageUrls: 'array',
+    //   isActive: 'boolean',
+    //   'discount.percentage': 'numeric|min:0|max:100'
+    // });
 
+    // if (!validation.success) {
+    //   console.error('❌ Validation error:', validation);
+    //   return res.status(400).json(validation);
+    // }
+
+    // 2. Gọi service để cập nhật phòng
     const room = await partnerService.updateRoom(
       req.user._id,
       req.params.roomId,
       req.body
     );
 
-    if (!room) {
-      return res.status(404).json({
-        success: false,
-        message: 'Không tìm thấy phòng'
-      });
-    }
+    console.log('✅ Controller: Cập nhật phòng thành công:', {
+      roomId: room._id,
+      hotelId: room.hotelId
+    });
 
-    res.json({
+    return res.status(200).json({
       success: true,
+      message: 'Cập nhật phòng thành công',
       data: room
     });
+
   } catch (error) {
-    console.error('🚨 Error in updateRoom:', error);
-    res.status(error.statusCode || 500).json({
+    console.error('❌ Controller: Lỗi trong updateRoom:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+
+    return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || 'Lỗi khi cập nhật phòng'
     });

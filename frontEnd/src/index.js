@@ -34,6 +34,7 @@ import PartnerBookingManagement from './routes/partner/BookingManagement';
 import PartnerPromotionManagement from './routes/partner/PromotionManagement';
 import PartnerReports from './routes/partner/Reports';
 import PartnerAccountManagement from './routes/partner/AccountManagement';
+import PartnerReviewManagement from './routes/partner/ReviewManagement';
 
 // if (process.env.NODE_ENV === 'development') {
 //   makeServer();
@@ -119,7 +120,8 @@ const router = createBrowserRouter([
           { path: 'bookings', element: <PartnerBookingManagement /> },
           { path: 'promotions', element: <PartnerPromotionManagement /> },
           { path: 'reports', element: <PartnerReports /> },
-          { path: 'account', element: <PartnerAccountManagement /> }
+          { path: 'account', element: <PartnerAccountManagement /> },
+          { path: 'reviews', element: <PartnerReviewManagement /> }
         ],
       },
     ],

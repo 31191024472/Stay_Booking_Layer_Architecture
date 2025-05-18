@@ -13,11 +13,7 @@ const authMiddleware = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log("✅ Token decoded:", decoded);
-
-    // Sử dụng ObjectId từ decoded.id để tìm user trong database
     const user = await userRepository.findById(decoded.id);
-    console.log("🔹 Check User:", user);
 
     if (!user) {
       return res
