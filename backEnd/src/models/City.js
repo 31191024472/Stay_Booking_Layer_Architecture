@@ -7,3 +7,6 @@ const citySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model('City', citySchema);
+
+
+

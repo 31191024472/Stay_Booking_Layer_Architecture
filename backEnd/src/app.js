@@ -8,14 +8,15 @@ import roomRoutes from "./routes/roomRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
-// admin router
-import adminBookingRoutes from "./routes/adminBookingRoutes.js"
-import adminCountryRoutes from "./routes/adminCountryRoutes.js"
-import adminUserRoutes from "./routes/adminUserRoutes.js"
-import adminRevenueRoutes from "./routes/adminRevenueRoutes.js"
-import adminEmailRoutes from "./routes/adminEmailRoutes.js"
-import adminHotelRoutes from "./routes/adminHotelRoutes.js"
-import adminRoomRoutes from "./routes/adminRoomRoutes.js"
+import adminBookingRoutes from "./routes/adminBookingRoutes.js";
+import adminCityRoutes from "./routes/adminCityRoutes.js";
+import adminCountryRoutes from "./routes/adminCountryRoutes.js";
+import adminEmailRoutes from "./routes/adminEmailRoutes.js";
+import adminHotelRoutes from "./routes/adminHotelRoutes.js";
+import adminRevenueRoutes from "./routes/adminRevenueRoutes.js";
+import adminRoomRoutes from "./routes/adminRoomRoutes.js";
+import adminUserRoutes from "./routes/adminUserRoutes.js";
+import partnerRoutes from "./routes/partnerRoutes.js"
 
 // Config ExpressExpress
 const app = express();
@@ -52,6 +53,11 @@ app.use("/api/admin/rooms", adminRoomRoutes);
 app.use("/api/admin/hotels", adminHotelRoutes);
 app.use("/api/admin/countries", adminCountryRoutes);
 app.use("/api/admin/email", adminEmailRoutes);
+app.use("/api/admin/cities", adminCityRoutes);
+
+// Partner routes
+app.use("/api/partner", partnerRoutes)
+
 
 // Upload imgs API
 app.use("/api", uploadRoutes); // Định tuyến upload

@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password_hash: { type: String, required: true },
   phone: { type: String, required: false },
-  role: { type: String, enum: ["user", "admin"], default: "user" },
+  role: { type: String, enum: ["user", "admin", "partner"], default: "user" },
   dateOfBirth: { type: Date, required: false, default: null },  // 🆕 Ngày sinh
   countryId: {                                             // ✅ Lưu ObjectId của Country
     type: mongoose.Schema.Types.ObjectId,

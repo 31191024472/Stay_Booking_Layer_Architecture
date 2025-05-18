@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 
 const RoomManagement = () => {
   const [rooms, setRooms] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRoom, setNewRoom] = useState({
-    hotelId: '',
+    hotelCode: '',
     roomType: 'Standard',
     description: '',
     pricePerNight: 0,
@@ -18,7 +19,7 @@ const RoomManagement = () => {
     discount: 0,
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [editingRoomId, setEditingRoomId] = useState(null); // ID của phòng đang chỉnh sửa
+  const [editingRoomId, setEditingRoomId] = useState(null);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -34,8 +35,28 @@ const RoomManagement = () => {
       }
     };
 
+    const fetchHotels = async () => {
+      try {
+        const hotelResponse = await axios.get(
+          'http://localhost:5000/api/admin/hotels'
+        );
+        setHotels(hotelResponse.data.hotels);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách khách sạn', error);
+      }
+    };
+
     fetchRooms();
+    fetchHotels();
   }, []);
+
+  const getHotelNameByCode = (hotelCode) => {
+    if (!hotels || hotels.length === 0) {
+      return 'Không tìm thấy khách sạn';
+    }
+    const hotel = hotels.find((h) => h.hotelCode === hotelCode);
+    return hotel ? hotel.title : 'Không tìm thấy khách sạn';
+  };
 
   const handleFileChange = (e) => {
     setSelectedFiles(Array.from(e.target.files));
@@ -43,13 +64,23 @@ const RoomManagement = () => {
 
   const handleCreateOrUpdateRoom = async () => {
     const formData = new FormData();
+
     Object.keys(newRoom).forEach((key) => {
+      if (key === 'discount') return; // bỏ qua discount ở vòng này
+
       if (key === 'amenities') {
         formData.append(key, newRoom[key].split(','));
       } else {
         formData.append(key, newRoom[key]);
       }
     });
+
+    // ✅ xử lý discount riêng, convert thành object string
+    const discountObj = {
+      percentage: Number(newRoom.discount) || 0,
+    };
+    formData.append('discount', JSON.stringify(discountObj));
+
     selectedFiles.forEach((file) => formData.append('images', file));
 
     try {
@@ -73,7 +104,7 @@ const RoomManagement = () => {
         setRooms([...rooms, response.data.data]);
         alert('Phòng đã được tạo!');
       }
-      resetForm(); // Reset form sau khi cập nhật hoặc thêm phòng
+      resetForm();
     } catch (error) {
       console.error('Lỗi khi lưu phòng', error);
     }
@@ -81,13 +112,13 @@ const RoomManagement = () => {
 
   const handleEditRoom = (room) => {
     setNewRoom({
-      hotelId: room.hotelId,
+      hotelCode: room.hotelCode,
       roomType: room.roomType,
       description: room.description,
       pricePerNight: room.pricePerNight,
       maxOccupancy: room.maxOccupancy,
       bedType: room.bedType,
-      amenities: room.amenities.join(','), // Chuyển array thành chuỗi
+      amenities: room.amenities.join(','),
       totalRooms: room.totalRooms,
       availableRooms: room.availableRooms,
       isActive: room.isActive,
@@ -109,7 +140,7 @@ const RoomManagement = () => {
 
   const resetForm = () => {
     setNewRoom({
-      hotelId: '',
+      hotelCode: '',
       roomType: 'Standard',
       description: '',
       pricePerNight: 0,
@@ -129,13 +160,14 @@ const RoomManagement = () => {
     <div className="p-5">
       <h2 className="text-xl font-semibold mb-4">Quản lý Phòng</h2>
 
-      {/* Form thêm/sửa phòng */}
       <form className="mb-4 space-y-2">
         <input
-          type="text"
-          placeholder="ID Khách sạn"
-          value={newRoom.hotelId}
-          onChange={(e) => setNewRoom({ ...newRoom, hotelId: e.target.value })}
+          type="number"
+          placeholder="Mã khách sạn"
+          value={newRoom.hotelCode}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, hotelCode: Number(e.target.value) })
+          }
           className="border p-2 block w-full"
         />
 
@@ -164,7 +196,76 @@ const RoomManagement = () => {
           placeholder="Giá mỗi đêm"
           value={newRoom.pricePerNight}
           onChange={(e) =>
-            setNewRoom({ ...newRoom, pricePerNight: e.target.value })
+            setNewRoom({ ...newRoom, pricePerNight: Number(e.target.value) })
+          }
+          className="border p-2 block w-full"
+        />
+
+        <input
+          type="text"
+          placeholder="Loại giường (bedType)"
+          value={newRoom.bedType}
+          onChange={(e) => setNewRoom({ ...newRoom, bedType: e.target.value })}
+          className="border p-2 block w-full"
+        />
+
+        <input
+          type="number"
+          placeholder="Số người tối đa (maxOccupancy)"
+          value={newRoom.maxOccupancy}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, maxOccupancy: Number(e.target.value) })
+          }
+          className="border p-2 block w-full"
+        />
+
+        <input
+          type="text"
+          placeholder="Tiện nghi (amenities, cách nhau bởi dấu phẩy)"
+          value={newRoom.amenities}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, amenities: e.target.value })
+          }
+          className="border p-2 block w-full"
+        />
+
+        <input
+          type="number"
+          placeholder="Tổng số phòng (totalRooms)"
+          value={newRoom.totalRooms}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, totalRooms: Number(e.target.value) })
+          }
+          className="border p-2 block w-full"
+        />
+
+        <input
+          type="number"
+          placeholder="Phòng còn trống (availableRooms)"
+          value={newRoom.availableRooms}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, availableRooms: Number(e.target.value) })
+          }
+          className="border p-2 block w-full"
+        />
+
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={newRoom.isActive}
+            onChange={(e) =>
+              setNewRoom({ ...newRoom, isActive: e.target.checked })
+            }
+          />
+          Hiển thị phòng (isActive)
+        </label>
+
+        <input
+          type="number"
+          placeholder="Giảm giá (%)"
+          value={newRoom.discount}
+          onChange={(e) =>
+            setNewRoom({ ...newRoom, discount: Number(e.target.value) })
           }
           className="border p-2 block w-full"
         />
@@ -176,18 +277,6 @@ const RoomManagement = () => {
           className="border p-2 block w-full"
         />
 
-        <label>
-          Giảm giá (%)
-          <input
-            type="number"
-            value={newRoom.discount}
-            onChange={(e) =>
-              setNewRoom({ ...newRoom, discount: e.target.value })
-            }
-            className="border p-2 block w-full"
-          />
-        </label>
-
         <div className="flex space-x-2">
           <button
             type="button"
@@ -196,7 +285,6 @@ const RoomManagement = () => {
           >
             {editingRoomId ? 'Cập nhật phòng' : 'Thêm phòng'}
           </button>
-
           {editingRoomId && (
             <button
               type="button"
@@ -209,46 +297,55 @@ const RoomManagement = () => {
         </div>
       </form>
 
-      {/* Danh sách phòng */}
       {loading ? (
         <p>Đang tải dữ liệu...</p>
-      ) : rooms.length > 0 ? (
-        <table className="w-full border-collapse border border-gray-300">
+      ) : (
+        <table className="w-full border table-auto text-sm">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-100">
+              <th className="border p-2">Khách sạn</th>
               <th className="border p-2">Loại phòng</th>
+              <th className="border p-2">Mô tả</th>
               <th className="border p-2">Giá</th>
-              <th className="border p-2">Giảm giá</th>
+              <th className="border p-2">Giảm giá (%)</th>
               <th className="border p-2">Hình ảnh</th>
-              <th className="border p-2">Hành động</th>
+              <th className="border p-2">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {rooms.map((room) => (
-              <tr key={room._id} className="border">
-                <td className="p-2">{room.roomType}</td>
-                <td className="p-2">{room.pricePerNight} VND</td>
-                <td className="p-2">{room.discount.percentage}%</td>
-                <td className="p-2 flex space-x-2">
-                  {room.imageUrls.map((url, idx) => (
-                    <img
-                      key={idx}
-                      src={url}
-                      alt="room"
-                      className="w-16 h-16 object-cover"
-                    />
-                  ))}
+              <tr key={room._id}>
+                <td className="border p-2">
+                  {getHotelNameByCode(room.hotelCode)}
                 </td>
-                <td className="p-2">
+                <td className="border p-2">{room.roomType}</td>
+                <td className="border p-2">{room.description}</td>
+                <td className="border p-2">{room.pricePerNight}</td>
+                <td className="border p-2">
+                  {room.discount?.percentage || 0}%
+                </td>
+                <td className="border p-2">
+                  <div className="flex gap-2 flex-wrap">
+                    {room.images?.map((img, index) => (
+                      <img
+                        key={index}
+                        src={img}
+                        alt={`Room ${index}`}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ))}
+                  </div>
+                </td>
+                <td className="border p-2 space-x-2">
                   <button
+                    className="bg-yellow-400 px-2 py-1 rounded text-white"
                     onClick={() => handleEditRoom(room)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
                   >
                     Sửa
                   </button>
                   <button
+                    className="bg-red-500 px-2 py-1 rounded text-white"
                     onClick={() => handleDeleteRoom(room._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
                   >
                     Xóa
                   </button>
@@ -257,8 +354,6 @@ const RoomManagement = () => {
             ))}
           </tbody>
         </table>
-      ) : (
-        <p>Không có phòng nào.</p>
       )}
     </div>
   );

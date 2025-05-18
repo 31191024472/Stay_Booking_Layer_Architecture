@@ -14,15 +14,69 @@ class HotelRepository {
   }
 
   async createHotel(hotelData) {
-    return await Hotel.create(hotelData);
+    try {
+      const hotel = new Hotel({
+        ...hotelData,
+        status: 'pending',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      return await hotel.save();
+    } catch (error) {
+      console.error('Error in HotelRepository.createHotel:', error);
+      throw error;
+    }
   }
 
-  async updateHotel(hotelCode, updatedData) {
-    return await Hotel.findOneAndUpdate({ hotelCode }, updatedData, { new: true });
+  async updateHotel(hotelId, updateData) {
+    try {
+      const hotel = await Hotel.findById(hotelId);
+      if (!hotel) {
+        throw new Error('Không tìm thấy khách sạn');
+      }
+
+      // Chỉ cho phép cập nhật các trường được phép
+      const allowedUpdates = [
+        'name',
+        'description',
+        'address',
+        'city',
+        'starRating',
+        'amenities',
+        'images'
+      ];
+
+      Object.keys(updateData).forEach(key => {
+        if (allowedUpdates.includes(key)) {
+          hotel[key] = updateData[key];
+        }
+      });
+
+      hotel.updatedAt = new Date();
+      return await hotel.save();
+    } catch (error) {
+      console.error('Error in HotelRepository.updateHotel:', error);
+      throw error;
+    }
   }
 
-  async deleteHotel(hotelCode) {
-    return await Hotel.findOneAndDelete({ hotelCode });
+  async deleteHotel(hotelId) {
+    try {
+      const hotel = await Hotel.findById(hotelId);
+      if (!hotel) {
+        throw new Error('Không tìm thấy khách sạn');
+      }
+
+      // Chỉ cho phép xóa khách sạn ở trạng thái pending
+      if (hotel.status !== 'pending') {
+        throw new Error('Chỉ có thể xóa khách sạn đang ở trạng thái chờ duyệt');
+      }
+
+      return await Hotel.findByIdAndDelete(hotelId);
+    } catch (error) {
+      console.error('Error in HotelRepository.deleteHotel:', error);
+      throw error;
+    }
   }
 
   async findHotelsByCity(cityId) {
@@ -356,6 +410,15 @@ class HotelRepository {
       return newReview;
     } catch (error) {
       console.error('Repository: Error in addReview:', error);
+      throw error;
+    }
+  }
+
+  async findByPartnerId(partnerId) {
+    try {
+      return await Hotel.find({ partnerId });
+    } catch (error) {
+      console.error('Error in HotelRepository.findByPartnerId:', error);
       throw error;
     }
   }

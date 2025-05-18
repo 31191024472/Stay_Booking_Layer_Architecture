@@ -14,7 +14,10 @@ const HotelManagement = () => {
     cityId: '',
     benefits: '',
     images: [],
+    description: '',
   });
+  const [cities, setCities] = useState([]);
+  const [revieImg, setRevieImg] = useState([]);
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -34,21 +37,45 @@ const HotelManagement = () => {
     fetchHotels();
   }, []);
 
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/admin/cities');
+        setCities(res.data.cities); // Điều này giả định rằng API trả về { cities: [...] }
+      } catch (err) {
+        console.error('Lỗi khi lấy danh sách thành phố:', err);
+      }
+    };
+
+    fetchCities();
+  }, []);
+
   const handleFileChange = (e) => {
     setNewHotel({ ...newHotel, images: e.target.files });
   };
 
   const handleCreateHotel = async () => {
+    if (!newHotel.hotelCode || !newHotel.title || !newHotel.cityId) {
+      alert('Vui lòng điền đầy đủ mã khách sạn, tên, và chọn thành phố.');
+      return;
+    }
     const formData = new FormData();
     formData.append('hotelCode', newHotel.hotelCode);
     formData.append('title', newHotel.title);
     formData.append('propertyType', newHotel.propertyType);
     formData.append('cityId', newHotel.cityId);
-    formData.append('benefits', newHotel.benefits);
+    const formattedBenefits = Array.isArray(newHotel.benefits)
+      ? newHotel.benefits
+      : newHotel.benefits.split(',').map((b) => b.trim());
+
+    formData.append('benefits', JSON.stringify(formattedBenefits));
+
+    formData.append('description', newHotel.description);
+
     Array.from(newHotel.images).forEach((file) =>
       formData.append('images', file)
     );
-
+    console.log(formData);
     try {
       const response = await axios.post(
         'http://localhost:5000/api/admin/hotels',
@@ -58,6 +85,17 @@ const HotelManagement = () => {
         }
       );
       setHotels([...hotels, response.data.data]);
+      setRevieImg([...revieImg, response.data.imageUrls]);
+      // Reset form sau khi tạo thành công
+      setNewHotel({
+        hotelCode: '',
+        title: '',
+        propertyType: '',
+        cityId: '',
+        benefits: '',
+        description: '',
+        images: [],
+      });
       alert('Khách sạn được tạo thành công!');
     } catch (error) {
       console.error('Lỗi tạo khách sạn:', error);
@@ -72,10 +110,20 @@ const HotelManagement = () => {
     formData.append('title', selectedHotel.title);
     formData.append('propertyType', selectedHotel.propertyType);
     formData.append('cityId', selectedHotel.cityId);
-    formData.append('benefits', selectedHotel.benefits);
-    Array.from(selectedHotel.images || []).forEach((file) =>
-      formData.append('images', file)
-    );
+    const formattedBenefits = Array.isArray(selectedHotel.benefits)
+      ? selectedHotel.benefits
+      : selectedHotel.benefits.split(',').map((b) => b.trim());
+
+    formData.append('benefits', JSON.stringify(formattedBenefits));
+
+    formData.append('description', selectedHotel.description);
+
+    // Nếu người dùng chọn ảnh mới, thì mới append vào
+    if (selectedHotel.images && selectedHotel.images.length > 0) {
+      Array.from(selectedHotel.images).forEach((file) =>
+        formData.append('images', file)
+      );
+    }
 
     try {
       const response = await axios.put(
@@ -88,10 +136,22 @@ const HotelManagement = () => {
 
       setHotels(
         hotels.map((hotel) =>
-          hotel._id === selectedHotel._id ? response.data.data : hotel
+          hotel._id === selectedHotel._id
+            ? { ...hotel, ...response.data.data }
+            : hotel
         )
       );
-      setSelectedHotel(null);
+
+      setSelectedHotel(response.data.data);
+      setNewHotel({
+        hotelCode: '',
+        title: '',
+        propertyType: 'Hotel',
+        cityId: '',
+        benefits: '',
+        description: '',
+        images: [],
+      });
       alert('Khách sạn được cập nhật thành công!');
     } catch (error) {
       console.error('Lỗi khi cập nhật khách sạn:', error);
@@ -159,9 +219,7 @@ const HotelManagement = () => {
           ))}
         </select>
 
-        <input
-          type="text"
-          placeholder="Thành phố (ID)"
+        <select
           value={selectedHotel?.cityId || newHotel.cityId}
           onChange={(e) =>
             selectedHotel
@@ -169,11 +227,25 @@ const HotelManagement = () => {
               : setNewHotel({ ...newHotel, cityId: e.target.value })
           }
           className="border p-2 block w-full"
-        />
+        >
+          <option value="">-- Chọn thành phố --</option>
+          {cities.map((city) => (
+            <option key={city._id} value={city._id}>
+              {city.name}
+            </option>
+          ))}
+        </select>
+
         <input
           type="text"
           placeholder="Lợi ích (cách nhau bằng dấu phẩy)"
-          value={selectedHotel?.benefits || newHotel.benefits}
+          value={
+            selectedHotel
+              ? Array.isArray(selectedHotel.benefits)
+                ? selectedHotel.benefits.join(', ')
+                : selectedHotel.benefits
+              : newHotel.benefits
+          }
           onChange={(e) =>
             selectedHotel
               ? setSelectedHotel({ ...selectedHotel, benefits: e.target.value })
@@ -181,6 +253,20 @@ const HotelManagement = () => {
           }
           className="border p-2 block w-full"
         />
+        <textarea
+          placeholder="Mô tả chi tiết"
+          value={selectedHotel?.description || newHotel.description}
+          onChange={(e) =>
+            selectedHotel
+              ? setSelectedHotel({
+                  ...selectedHotel,
+                  description: e.target.value,
+                })
+              : setNewHotel({ ...newHotel, description: e.target.value })
+          }
+          className="border p-2 block w-full"
+        />
+
         <input
           type="file"
           multiple
@@ -226,11 +312,11 @@ const HotelManagement = () => {
           </thead>
           <tbody>
             {hotels.map((hotel) => (
-              <tr key={hotel._id} className="border">
+              <tr key={hotel?._id} className="border">
                 <td className="p-2">
-                  {hotel.imageUrls?.length > 0 ? (
+                  {hotel?.imageUrls && hotel?.imageUrls.length > 0 ? (
                     <img
-                      src={hotel.imageUrls[0]}
+                      src={hotel.imageUrls[0] || revieImg[0]}
                       alt={hotel.title}
                       className="w-20 h-20 object-cover"
                     />
@@ -238,13 +324,18 @@ const HotelManagement = () => {
                     'Không có ảnh'
                   )}
                 </td>
-                <td className="p-2">{hotel.title}</td>
-                <td className="p-2">{hotel.propertyType}</td>
-                <td className="p-2">{hotel.ratings || 'N/A'} ⭐</td>
-                <td className="p-2">{hotel.cityId?.name || 'N/A'}</td>
+                <td className="p-2">{hotel?.title}</td>
+                <td className="p-2">{hotel?.propertyType}</td>
+                <td className="p-2">{hotel?.ratings || 'N/A'} ⭐</td>
+                <td className="p-2">{hotel?.cityId?.name || 'N/A'}</td>
                 <td className="p-2">
                   <button
-                    onClick={() => setSelectedHotel(hotel)}
+                    onClick={() =>
+                      setSelectedHotel({
+                        ...hotel,
+                        cityId: hotel?.cityId?._id || hotel?.cityId, // Đảm bảo cityId là string _id
+                      })
+                    }
                     className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
                   >
                     Sửa

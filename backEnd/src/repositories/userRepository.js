@@ -8,6 +8,7 @@ const findByEmail = (email) => User.findOne({ email });
 
 // Cập nhật mật khẩu (HASHED) của user
 export const updateUserPassword = async (email, hashedPassword) => {
+    
      await User.findOneAndUpdate({ email }, { password_hash: hashedPassword });
 };
 // Tạo user mới

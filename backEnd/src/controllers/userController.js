@@ -17,7 +17,7 @@ export const login = async (req, res) => {
     const { token, user } = await userServices.login(
       req.body.email,
       req.body.password
-    ); // token = await userServices.login(req.body.email, req.body.password);
+    ); 
     res.json({
       success: true,
       isAuthenticated: true,

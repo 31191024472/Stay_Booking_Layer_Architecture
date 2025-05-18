@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Sử dụng ObjectId từ decoded.id để tìm user trong database
     const user = await userRepository.findById(decoded.id);
-    // console.log("🔹 Check User:", user);
+    console.log("🔹 Check User:", user);
 
     if (!user) {
       return res

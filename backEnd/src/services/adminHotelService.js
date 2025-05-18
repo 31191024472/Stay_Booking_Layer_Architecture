@@ -16,6 +16,14 @@ export const createHotel = async (hotelData, files) => {
 
   hotelData.imageUrls = imageUrls;
 
+  if (typeof hotelData.benefits === "string") {
+    try {
+      hotelData.benefits = JSON.parse(hotelData.benefits);
+    } catch (err) {
+      hotelData.benefits = hotelData.benefits.split(",").map((b) => b.trim());
+    }
+  }
+
   return await hotelRepo.createHotel(hotelData);
 };
 

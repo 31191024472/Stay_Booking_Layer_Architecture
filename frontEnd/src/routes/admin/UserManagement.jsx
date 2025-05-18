@@ -226,14 +226,14 @@ const UserManagement = () => {
                 </option>
               ))}
             </select>
-            <input
+            {/* <input
               type="password"
               name="password"
               placeholder="Mật khẩu"
               value={formData.password}
               onChange={handleChange}
               className="w-full mb-2 p-2 border rounded"
-            />
+            /> */}
             <select
               name="role"
               value={formData.role}
@@ -242,6 +242,7 @@ const UserManagement = () => {
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
+              <option value="partner">Partner</option>
             </select>
 
             <div className="flex justify-end">
