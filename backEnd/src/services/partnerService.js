@@ -369,92 +369,40 @@ class PartnerService {
   }
   async updateRoom(partnerId, roomId, updateData) {
     try {
-      console.log(' Service: Bắt đầu cập nhật phòng:', {
-        partnerId,
-        roomId,
-        updateData,
-      });
-  
-      // 1. Kiểm tra partner tồn tại và có quyền
+      // Kiểm tra quyền đối tác
       const partner = await userRepository.findById(partnerId);
-      if (!partner) {
-        console.error('❌ Không tìm thấy partner');
-        throw new AppError('Không tìm thấy partner', 404);
-      }
-  
-      if (partner.role !== 'partner') {
-        console.error('❌ Không có quyền cập nhật phòng');
+      if (!partner || partner.role !== 'partner') {
         throw new AppError('Không có quyền cập nhật phòng', 403);
       }
   
-      // 2. Kiểm tra phòng tồn tại
+      // Kiểm tra phòng tồn tại
       const room = await roomRepository.findById(roomId);
       if (!room) {
-        console.error('❌ Không tìm thấy phòng');
-        throw new AppError('Không tìm thấy phòng', 404);
+        throw new AppError('Phòng không tồn tại', 404);
       }
-      // console.log('>>>>>Chekc hotelId', room.hotelId)
-      // // 3. Kiểm tra khách sạn tồn tại
-      // const hotel = await hotelRepository.findById(room.hotelId);
-      // if (!hotel) {
-      //   console.error('❌ Không tìm thấy khách sạn');
-      //   throw new AppError('Không tìm thấy khách sạn', 404);
-      // }
   
-      // 4. Kiểm tra quyền sở hữu
-      if (!hotel.partner_id.equals(partnerId)) {
-        console.error('❌ Không có quyền cập nhật phòng của khách sạn này');
+      // Kiểm tra chủ sở hữu khách sạn
+      const hotel = await hotelRepository.findById(room.hotelId);
+      if (!hotel || !hotel.partner_id.equals(partnerId)) {
         throw new AppError('Không có quyền cập nhật phòng của khách sạn này', 403);
       }
   
-      // // 5. Kiểm tra số phòng khả dụng
-      // if (updateData.availableRooms && updateData.availableRooms > updateData.totalRooms) {
-      //   console.error('❌ Số phòng khả dụng không thể lớn hơn tổng số phòng');
-      //   throw new AppError('Số phòng khả dụng không thể lớn hơn tổng số phòng', 400);
-      // }
-  
-      // 6. Chuẩn bị dữ liệu cập nhật
-      const roomUpdateData = {
-        roomType: updateData.roomType,
-        description: updateData.description,
-        pricePerNight: updateData.pricePerNight,
-        maxOccupancy: updateData.maxOccupancy,
-        bedType: updateData.bedType,
-        amenities: updateData.amenities,
-        totalRooms: updateData.totalRooms,
-        availableRooms: updateData.availableRooms,
-        imageUrls: updateData.imageUrls,
-        isActive: updateData.isActive,
+      // Cập nhật phòng
+      const updatedRoom = await roomRepository.update(roomId, {
+        ...updateData,
         discount: {
-          percentage: updateData.discount?.percentage || 0
-        }
-      };
-  
-      // 7. Cập nhật phòng
-      const updatedRoom = await roomRepository.update(roomId, roomUpdateData);
-  
-      console.log('✅ Service: Cập nhật phòng thành công:', {
-        roomId: updatedRoom._id,
-        hotelId: updatedRoom.hotelId
+          percentage: updateData.discount?.percentage || 0,
+        },
       });
   
       return updatedRoom;
   
-    } catch (error) {
-      console.error('❌ Service: Lỗi trong updateRoom:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-  
-      if (error instanceof AppError) {
-        throw error;
-      }
-  
-      throw new AppError('Lỗi khi cập nhật phòng', 500);
+    } catch (err) {
+      console.error('Lỗi khi cập nhật phòng:', err.message);
+      throw err instanceof AppError ? err : new AppError('Lỗi hệ thống', 500);
     }
   }
-
+  
   // Quản lý khuyến mãi
   async getDiscounts(partnerId) {
     try {

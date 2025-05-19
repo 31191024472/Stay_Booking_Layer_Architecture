@@ -268,39 +268,11 @@ export const updateRoom = async (req, res) => {
       roomId: req.params.roomId,
       updateData: req.body
     });
-
-    // // 1. Validate dữ liệu đầu vào
-    // const validation = validateRequest(req.body, {
-    //   roomType: 'string',
-    //   description: 'string',
-    //   pricePerNight: 'numeric|min:0',
-    //   maxOccupancy: 'numeric|min:1',
-    //   bedType: 'string',
-    //   amenities: 'array',
-    //   totalRooms: 'numeric|min:1',
-    //   availableRooms: 'numeric|min:0',
-    //   imageUrls: 'array',
-    //   isActive: 'boolean',
-    //   'discount.percentage': 'numeric|min:0|max:100'
-    // });
-
-    // if (!validation.success) {
-    //   console.error('❌ Validation error:', validation);
-    //   return res.status(400).json(validation);
-    // }
-
-    // 2. Gọi service để cập nhật phòng
     const room = await partnerService.updateRoom(
       req.user._id,
       req.params.roomId,
       req.body
     );
-
-    console.log('✅ Controller: Cập nhật phòng thành công:', {
-      roomId: room._id,
-      hotelId: room.hotelId
-    });
-
     return res.status(200).json({
       success: true,
       message: 'Cập nhật phòng thành công',

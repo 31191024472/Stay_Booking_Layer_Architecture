@@ -29,34 +29,6 @@ const RoomManagement = () => {
   });
   
 
-  // Dữ liệu mẫu cho phòng
-  const defaultRooms = [
-    {
-      _id: '1',
-      hotelId: '1',
-      name: 'Phòng Deluxe',
-      type: 'deluxe',
-      price: 1500000,
-      capacity: 2,
-      description: 'Phòng Deluxe với view thành phố',
-      amenities: ['Wifi', 'TV', 'Mini bar'],
-      images: ['/placeholder-room.jpg'],
-      status: 'available'
-    },
-    {
-      _id: '2',
-      hotelId: '1',
-      name: 'Phòng Suite',
-      type: 'suite',
-      price: 2500000,
-      capacity: 4,
-      description: 'Phòng Suite rộng rãi với phòng khách riêng',
-      amenities: ['Wifi', 'TV', 'Mini bar', 'Bồn tắm'],
-      images: ['/placeholder-room.jpg'],
-      status: 'booked'
-    }
-  ];
-
   useEffect(() => {
     fetchHotels();
   }, []);
@@ -423,10 +395,10 @@ onClick={() => {
                   >
                     <option value={formData.roomType}>{formData.roomType}</option>
                     <option value="">Chọn loại phòng</option>
-                    <option value="standard">Standard</option>
-                    <option value="deluxe">Deluxe</option>
-                    <option value="suite">Suite</option>
-                    <option value="executive">Executive</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Deluxe">Deluxe</option>
+                    <option value="Suite">Suite</option>
+                    <option value="Executive">Executive</option>
                   </select>
                 </div>
                 <div>
@@ -606,10 +578,10 @@ onClick={() => {
                     required
                   >
                     <option value="">Chọn loại phòng</option>
-                    <option value="standard">Standard</option>
-                    <option value="deluxe">Deluxe</option>
-                    <option value="suite">Suite</option>
-                    <option value="executive">Executive</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Deluxe">Deluxe</option>
+                    <option value="Suite">Suite</option>
+                    <option value="Executive">Executive</option>
                   </select>
                 </div>
                 <div>
