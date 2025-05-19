@@ -1,4 +1,5 @@
 import partnerService from '../services/partnerService.js';
+import * as cityService from "../services/adminCityService.js";
 import { validateRequest } from '../utils/validator.js';
 
 // Quản lý khách sạn
@@ -15,6 +16,15 @@ export const getHotels = async (req, res) => {
       success: false,
       message: error.message || 'Lỗi khi lấy danh sách khách sạn'
     });
+  }
+};
+
+export const getCities = async (req, res) => {
+  try {
+    const cities = await cityService.getAllCities();
+    res.status(200).json({ cities });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách thành phố", error });
   }
 };
 

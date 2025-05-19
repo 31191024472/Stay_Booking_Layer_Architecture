@@ -8,6 +8,7 @@ import {
   updateHotel,
   deleteHotel,
   getHotelDetails,
+  getCities,
   
   // Quản lý phòng
   getRooms,
@@ -46,6 +47,7 @@ router.post('/hotels', createHotel);
 router.put('/hotels/:hotelId', updateHotel);
 router.delete('/hotels/:hotelId', deleteHotel);
 router.get('/hotels/:hotelId', getHotelDetails);
+router.get('/cities', getCities)
 
 // Quản lý phòng
 router.get('/hotels/:hotelId/rooms', getRooms);

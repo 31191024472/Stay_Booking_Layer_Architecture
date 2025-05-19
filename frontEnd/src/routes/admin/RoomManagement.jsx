@@ -6,18 +6,20 @@ const RoomManagement = () => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRoom, setNewRoom] = useState({
-    hotelCode: '',
+    hotelId: '',
     roomType: 'Standard',
     description: '',
     pricePerNight: 0,
     maxOccupancy: 2,
     bedType: '',
-    amenities: '',
+    amenities: [],
     totalRooms: 1,
     availableRooms: 1,
     isActive: true,
     discount: 0,
+    imageUrls: []
   });
+  
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [editingRoomId, setEditingRoomId] = useState(null);
 
@@ -140,17 +142,18 @@ const RoomManagement = () => {
 
   const resetForm = () => {
     setNewRoom({
-      hotelCode: '',
-      roomType: 'Standard',
-      description: '',
-      pricePerNight: 0,
-      maxOccupancy: 2,
-      bedType: '',
-      amenities: '',
-      totalRooms: 1,
-      availableRooms: 1,
-      isActive: true,
-      discount: 0,
+      hotelId: '',
+  roomType: 'Standard',
+  description: '',
+  pricePerNight: 0,
+  maxOccupancy: 2,
+  bedType: '',
+  amenities: [],
+  totalRooms: 1,
+  availableRooms: 1,
+  isActive: true,
+  discount: 0,
+  imageUrls: []
     });
     setSelectedFiles([]);
     setEditingRoomId(null);
@@ -202,14 +205,6 @@ const RoomManagement = () => {
         />
 
         <input
-          type="text"
-          placeholder="Loại giường (bedType)"
-          value={newRoom.bedType}
-          onChange={(e) => setNewRoom({ ...newRoom, bedType: e.target.value })}
-          className="border p-2 block w-full"
-        />
-
-        <input
           type="number"
           placeholder="Số người tối đa (maxOccupancy)"
           value={newRoom.maxOccupancy}
@@ -228,17 +223,6 @@ const RoomManagement = () => {
           }
           className="border p-2 block w-full"
         />
-
-        <input
-          type="number"
-          placeholder="Tổng số phòng (totalRooms)"
-          value={newRoom.totalRooms}
-          onChange={(e) =>
-            setNewRoom({ ...newRoom, totalRooms: Number(e.target.value) })
-          }
-          className="border p-2 block w-full"
-        />
-
         <input
           type="number"
           placeholder="Phòng còn trống (availableRooms)"

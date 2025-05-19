@@ -32,11 +32,6 @@ const PartnerSidebar = () => {
       icon: '🎁'
     },
     {
-      path: '/partner/reviews',
-      label: 'Quản lý đánh giá',
-      icon: '⭐'
-    },
-    {
       path: '/partner/reports',
       label: 'Thống kê & Báo cáo',
       icon: '📈'

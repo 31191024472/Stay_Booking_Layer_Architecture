@@ -32,7 +32,6 @@ import PartnerHotelManagement from './routes/partner/HotelManagement';
 import PartnerRoomManagement from './routes/partner/RoomManagement';
 import PartnerBookingManagement from './routes/partner/BookingManagement';
 import PartnerPromotionManagement from './routes/partner/PromotionManagement';
-import PartnerReports from './routes/partner/Reports';
 import PartnerAccountManagement from './routes/partner/AccountManagement';
 import PartnerReviewManagement from './routes/partner/ReviewManagement';
 
@@ -119,7 +118,6 @@ const router = createBrowserRouter([
           { path: 'rooms', element: <PartnerRoomManagement /> },
           { path: 'bookings', element: <PartnerBookingManagement /> },
           { path: 'promotions', element: <PartnerPromotionManagement /> },
-          { path: 'reports', element: <PartnerReports /> },
           { path: 'account', element: <PartnerAccountManagement /> },
           { path: 'reviews', element: <PartnerReviewManagement /> }
         ],

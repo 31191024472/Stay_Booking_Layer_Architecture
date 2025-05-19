@@ -13,14 +13,19 @@ const HotelManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
+  const [cities, setCities] = useState([]);
   const [formData, setFormData] = useState({
+    hotelCode: '',
     title: '',
     subtitle: '',
     description: '',
     cityId: '',
     propertyType: 'Hotel',
     benefits: [],
-    imageUrls: []
+    ratings: 5,
+    imageUrls: [],
+    status: 'Chưa xét duyệt',
+    address: 'Chưa Cập Nhật'
   });
 
   const benefitsList = [
@@ -60,7 +65,18 @@ const HotelManagement = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await networkAdapter.get('/api/partner/cities');
+        setCities(res.cities);
+      } catch (err) {
+        console.error('Lỗi khi lấy danh sách thành phố:', err);
+      }
+    };
 
+    fetchCities();
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -78,18 +94,26 @@ const HotelManagement = () => {
     }));
   };
 
+  /**
+   * Xử lý việc upload ảnh lên Cloudinary
+   * @param {Event} e - Event từ input file
+   */
   const handleImageUpload = async (e) => {
+    // Lấy danh sách file từ input
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
+    // Tạo FormData để gửi file
     const formData = new FormData();
     files.forEach(file => {
       formData.append('images', file);
     });
 
     try {
+      // Gọi API upload ảnh
       const response = await networkAdapter.post('/api/upload/images', formData);
       if (response.success) {
+        // Nếu upload thành công, thêm URL ảnh vào formData
         setFormData(prev => ({
           ...prev,
           imageUrls: [...prev.imageUrls, ...response.data.urls]
@@ -106,9 +130,29 @@ const HotelManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted:', formData); // Debug log
+
     try {
+      // Validate dữ liệu bắt buộc
+      if (!formData.hotelCode || !formData.title || !formData.subtitle) {
+        toast.error('Vui lòng điền đầy đủ thông tin bắt buộc (Mã khách sạn, Tên khách sạn, Mô tả ngắn)');
+        return;
+      }
+
+      // Chuẩn bị dữ liệu gửi đi
+      const hotelData = {
+        ...formData,
+        hotelCode: parseInt(formData.hotelCode),
+        ratings: parseInt(formData.ratings),
+        // Đảm bảo imageUrls luôn là mảng
+        imageUrls: formData.imageUrls || []
+      };
+
+      console.log('Sending hotel data:', hotelData); // Debug log
+
       if (selectedHotel) {
-        const response = await networkAdapter.put(`/api/partner/hotels/${selectedHotel.id}`, formData);
+        const response = await networkAdapter.put(`/api/partner/hotels/${selectedHotel._id}`, hotelData);
+        console.log('Update response:', response); // Debug log
         if (response.success) {
           toast.success('Cập nhật khách sạn thành công');
           fetchHotels();
@@ -117,7 +161,8 @@ const HotelManagement = () => {
           toast.error(response.message || 'Không thể cập nhật khách sạn');
         }
       } else {
-        const response = await networkAdapter.post('/api/partner/hotels', formData);
+        const response = await networkAdapter.post('/api/partner/hotels', hotelData);
+        console.log('Create response:', response); // Debug log
         if (response.success) {
           toast.success('Thêm khách sạn thành công');
           fetchHotels();
@@ -128,20 +173,24 @@ const HotelManagement = () => {
       }
       resetForm();
     } catch (err) {
-      toast.error('Có lỗi xảy ra');
       console.error('Error saving hotel:', err);
+      toast.error('Có lỗi xảy ra khi lưu khách sạn');
     }
   };
 
   const resetForm = () => {
     setFormData({
+      hotelCode: '',
       title: '',
       subtitle: '',
       description: '',
       cityId: '',
       propertyType: 'Hotel',
       benefits: [],
-      imageUrls: []
+      ratings: 5,
+      imageUrls: [],
+      status: 'Chưa xét duyệt',
+      address: 'Chưa Cập Nhật'
     });
     setSelectedHotel(null);
   };
@@ -149,13 +198,17 @@ const HotelManagement = () => {
   const handleEdit = (hotel) => {
     setSelectedHotel(hotel);
     setFormData({
+      hotelCode: hotel.hotelCode.toString(),
       title: hotel.title,
       subtitle: hotel.subtitle,
       description: hotel.description,
       cityId: hotel.cityId,
       propertyType: hotel.propertyType,
       benefits: hotel.benefits,
-      imageUrls: hotel.imageUrls
+      ratings: hotel.ratings,
+      imageUrls: hotel.imageUrls,
+      status: hotel.status,
+      address: hotel.address
     });
     setShowEditModal(true);
   };
@@ -277,8 +330,19 @@ const HotelManagement = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Thêm khách sạn mới</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Mã khách sạn</label>
+                  <input
+                    type="number"
+                    name="hotelCode"
+                    value={formData.hotelCode}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tên khách sạn</label>
                   <input
@@ -291,7 +355,7 @@ const HotelManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                  <label className="block text-sm font-medium text-gray-700">Mô tả ngắn</label>
                   <input
                     type="text"
                     name="subtitle"
@@ -302,7 +366,7 @@ const HotelManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mô tả</label>
+                  <label className="block text-sm font-medium text-gray-700">Mô tả chi tiết</label>
                   <textarea
                     name="description"
                     value={formData.description}
@@ -310,6 +374,64 @@ const HotelManagement = () => {
                     rows="3"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Loại khách sạn</label>
+                  <select
+                    name="propertyType"
+                    value={formData.propertyType}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="Hotel">Khách sạn</option>
+                    <option value="Resort">Resort</option>
+                    <option value="Homestay">Homestay</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Apartment">Căn hộ</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Thành phố</label>
+                  <select
+                    name="cityId"
+                    value={formData.cityId}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="">-- Chọn thành phố --</option>
+                    {cities.map(city => (
+                      <option key={city._id} value={city._id}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Đánh giá</label>
+                  <select
+                    name="ratings"
+                    value={formData.ratings}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="1">1 sao</option>
+                    <option value="2">2 sao</option>
+                    <option value="3">3 sao</option>
+                    <option value="4">4 sao</option>
+                    <option value="5">5 sao</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiện nghi</label>
@@ -338,12 +460,25 @@ const HotelManagement = () => {
                   />
                   <div className="mt-2 grid grid-cols-3 gap-2">
                     {formData.imageUrls.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Hotel image ${index + 1}`}
-                        className="w-full h-24 object-cover rounded"
-                      />
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Hotel image ${index + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              imageUrls: prev.imageUrls.filter((_, i) => i !== index)
+                            }));
+                          }}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -379,6 +514,17 @@ const HotelManagement = () => {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
+                  <label className="block text-sm font-medium text-gray-700">Mã khách sạn</label>
+                  <input
+                    type="number"
+                    name="hotelCode"
+                    value={formData.hotelCode}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700">Tên khách sạn</label>
                   <input
                     type="text"
@@ -401,7 +547,7 @@ const HotelManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mô tả</label>
+                  <label className="block text-sm font-medium text-gray-700">Mô tả chi tiết</label>
                   <textarea
                     name="description"
                     value={formData.description}
@@ -409,6 +555,64 @@ const HotelManagement = () => {
                     rows="3"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Loại khách sạn</label>
+                  <select
+                    name="propertyType"
+                    value={formData.propertyType}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="Hotel">Khách sạn</option>
+                    <option value="Resort">Resort</option>
+                    <option value="Homestay">Homestay</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Apartment">Căn hộ</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Thành phố</label>
+                  <select
+                    name="cityId"
+                    value={formData.cityId}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="">-- Chọn thành phố --</option>
+                    {cities.map(city => (
+                      <option key={city._id} value={city._id}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Đánh giá</label>
+                  <select
+                    name="ratings"
+                    value={formData.ratings}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="1">1 sao</option>
+                    <option value="2">2 sao</option>
+                    <option value="3">3 sao</option>
+                    <option value="4">4 sao</option>
+                    <option value="5">5 sao</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tiện nghi</label>
@@ -437,12 +641,25 @@ const HotelManagement = () => {
                   />
                   <div className="mt-2 grid grid-cols-3 gap-2">
                     {formData.imageUrls.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Hotel image ${index + 1}`}
-                        className="w-full h-24 object-cover rounded"
-                      />
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Hotel image ${index + 1}`}
+                          className="w-full h-24 object-cover rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              imageUrls: prev.imageUrls.filter((_, i) => i !== index)
+                            }));
+                          }}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
