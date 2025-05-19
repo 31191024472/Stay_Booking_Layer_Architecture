@@ -132,7 +132,8 @@ const RoomManagement = () => {
       };
       console.log('Sending room data:', roomData); // Debug log
 
-      const response = await networkAdapter.post('/api/partner/rooms', roomData);
+      const response = await networkAdapter.post(`/api/partner/hotels/${selectedHotel}/rooms`, roomData);
+
       if (response.success) {
         toast.success('Thêm phòng thành công');
         setShowAddModal(false);
@@ -224,7 +225,7 @@ const RoomManagement = () => {
   };
   // Hàm lấy tên khách sạn
   const getHotelName = (hotelId) => {
-    const hotel = hotels.find(h => h._id === hotelId);
+    const hotel = hotels.find(h => h.id === hotelId);
     return hotel ? hotel.title : 'Khách sạn không xác định';
   };
 
@@ -251,7 +252,7 @@ const RoomManagement = () => {
           <p className="text-gray-600 text-sm mb-2">
             {getHotelName(room.hotelId)}
           </p>
-          <p className="text-gray-600 text-sm mb-2">{room.roomType || room.type || 'Không xác định'}</p>
+          <p className="text-gray-600 text-sm mb-2">{room.roomType || room.roomType || 'Không xác định'}</p>
           <p className="text-gray-600 text-sm mb-4">
             {(room.pricePerNight || room.price || 0).toLocaleString('vi-VN')} VNĐ/đêm
           </p>

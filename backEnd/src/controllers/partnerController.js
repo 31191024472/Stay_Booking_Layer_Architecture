@@ -1,4 +1,5 @@
 import partnerService from '../services/partnerService.js';
+import bookingServices from '../services/bookingServices.js';
 import * as cityService from "../services/adminCityService.js";
 import { validateRequest } from '../utils/validator.js';
 
@@ -52,7 +53,6 @@ export const updateHotel = async (req, res) => {
   try {
     const { hotelId } = req.params;
     const updateData = req.body;
-
     // 1. Kiểm tra dữ liệu đầu vào
     if (!hotelId) {
       console.error('❌ Thiếu hotelId');
@@ -202,7 +202,6 @@ export const getRooms = async (req, res) => {
   }
 };
 
-
 export const createRoom = async (req, res) => {
   try {
     console.log('🚀 Controller: Bắt đầu tạo phòng mới:', {
@@ -314,6 +313,25 @@ export const deleteRoom = async (req, res) => {
   }
 };
 
+// Quản lý đặt phòng
+export const getBookingsByHotel = async (req, res) => {
+  try {
+    const { hotelId } = req.params;
+
+    const bookings = await bookingServices.getBookingsByHotel(hotelId);
+
+    return res.status(200).json({
+      success: true,
+      data: bookings,
+    });
+  } catch (error) {
+    console.error('❌ Controller: Lỗi khi lấy booking theo khách sạn:', error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Lỗi server khi lấy danh sách booking',
+    });
+  }
+};
 // Quản lý khuyến mãi
 export const getDiscounts = async (req, res) => {
   try {

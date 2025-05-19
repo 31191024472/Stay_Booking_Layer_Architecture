@@ -110,21 +110,31 @@ const HotelManagement = () => {
     });
 
     try {
-      // Gọi API upload ảnh
-      const response = await networkAdapter.post('/api/upload/images', formData);
-      if (response.success) {
+      // Gọi API upload ảnh trực tiếp bằng fetch
+      const response = await fetch('http://localhost:5000/api/upload/images', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log(">>>Check img data:", data);
+
+      if (data.success) {
         // Nếu upload thành công, thêm URL ảnh vào formData
         setFormData(prev => ({
           ...prev,
-          imageUrls: [...prev.imageUrls, ...response.data.urls]
+          imageUrls: [...prev.imageUrls, ...data.data.urls]
         }));
         toast.success('Tải lên hình ảnh thành công');
       } else {
-        toast.error(response.message || 'Không thể tải lên hình ảnh');
+        toast.error(data.message || 'Không thể tải lên hình ảnh');
       }
     } catch (err) {
-      toast.error('Không thể tải lên hình ảnh');
       console.error('Error uploading images:', err);
+      toast.error('Không thể tải lên hình ảnh');
     }
   };
 
@@ -148,11 +158,8 @@ const HotelManagement = () => {
         imageUrls: formData.imageUrls || []
       };
 
-      console.log('Sending hotel data:', hotelData); // Debug log
-
       if (selectedHotel) {
-        const response = await networkAdapter.put(`/api/partner/hotels/${selectedHotel._id}`, hotelData);
-        console.log('Update response:', response); // Debug log
+        const response = await networkAdapter.put(`/api/partner/hotels/${selectedHotel.id}`, hotelData);
         if (response.success) {
           toast.success('Cập nhật khách sạn thành công');
           fetchHotels();
@@ -162,7 +169,6 @@ const HotelManagement = () => {
         }
       } else {
         const response = await networkAdapter.post('/api/partner/hotels', hotelData);
-        console.log('Create response:', response); // Debug log
         if (response.success) {
           toast.success('Thêm khách sạn thành công');
           fetchHotels();

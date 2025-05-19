@@ -6,6 +6,7 @@ import bookingRepository from '../repositories/bookingRepository.js';
 import { AppError } from '../utils/errorHandler.js';
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import promotionRepository from '../repositories/promotionRepository.js';
 
 class PartnerService {
   // Quản lý khách sạn
@@ -245,6 +246,35 @@ class PartnerService {
     }
   }
 
+  // Quản lý đặt phòng
+  async getBookingsByHotel(partnerId, hotelId, filters = {}, pagination = {}) {
+    try {
+      console.log('Service: Bắt đầu lấy danh sách đặt phòng:', {
+        partnerId,
+        hotelId,
+        filters,
+        pagination
+      });
+
+      // 1. Kiểm tra quyền truy cập
+      const hotel = await hotelRepository.findById(hotelId);
+      if (!hotel) {
+        throw new AppError('Không tìm thấy khách sạn', 404);
+      }
+
+      if (!hotel.partner_id.equals(partnerId)) {
+        throw new AppError('Không có quyền xem đặt phòng của khách sạn này', 403);
+      }
+
+      // 2. Lấy danh sách đặt phòng
+      const bookings = await bookingRepository.findByHotelId(hotelId, filters, pagination);
+
+      return bookings;
+    } catch (error) {
+      console.error('❌ Service: Lỗi trong getBookingsByHotel:', error);
+      throw error instanceof AppError ? error : new AppError('Lỗi khi lấy danh sách đặt phòng', 500);
+    }
+  }
   // Quản lý phòng
   async getRooms(partnerId, hotelId) {
     try {
@@ -403,6 +433,7 @@ class PartnerService {
     }
   }
   
+  
   // Quản lý khuyến mãi
   async getDiscounts(partnerId) {
     try {
@@ -532,6 +563,200 @@ class PartnerService {
     } catch (error) {
       if (error instanceof AppError) throw error;
       throw new AppError('Lỗi khi đổi mật khẩu', 500);
+    }
+  }
+
+  async deleteRoom(partnerId, roomId) {
+    try {
+      console.log('Service: Bắt đầu xóa phòng:', {
+        partnerId,
+        roomId
+      });
+
+      // 1. Kiểm tra partner tồn tại và có quyền
+      const partner = await userRepository.findById(partnerId);
+      if (!partner) {
+        console.error('❌ Không tìm thấy partner');
+        throw new AppError('Không tìm thấy partner', 404);
+      }
+
+      if (partner.role !== 'partner') {
+        console.error('❌ Không có quyền xóa phòng');
+        throw new AppError('Không có quyền xóa phòng', 403);
+      }
+
+      // 2. Kiểm tra phòng tồn tại
+      const room = await roomRepository.findById(roomId);
+      if (!room) {
+        console.error('❌ Không tìm thấy phòng');
+        throw new AppError('Không tìm thấy phòng', 404);
+      }
+
+      // 3. Kiểm tra khách sạn tồn tại
+      const hotel = await hotelRepository.findById(room.hotelId);
+      if (!hotel) {
+        console.error('❌ Không tìm thấy khách sạn');
+        throw new AppError('Không tìm thấy khách sạn', 404);
+      }
+
+      // 4. Kiểm tra quyền sở hữu
+      if (!hotel.partner_id.equals(partnerId)) {
+        console.error('❌ Không có quyền xóa phòng của khách sạn này');
+        throw new AppError('Không có quyền xóa phòng của khách sạn này', 403);
+      }
+
+      // 5. Xóa phòng
+      const deletedRoom = await roomRepository.delete(roomId);
+      if (!deletedRoom) {
+        console.error('❌ Không thể xóa phòng');
+        throw new AppError('Không thể xóa phòng', 500);
+      }
+
+      console.log('✅ Service: Xóa phòng thành công:', {
+        roomId: deletedRoom._id,
+        hotelId: deletedRoom.hotelId
+      });
+
+      return {
+        success: true,
+        message: 'Xóa phòng thành công'
+      };
+
+    } catch (error) {
+      console.error('❌ Service: Lỗi trong deleteRoom:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw new AppError('Lỗi khi xóa phòng', 500);
+    }
+  }
+
+  // Quản lý khuyến mãi
+  async createPromotion(partnerId, promotionData) {
+    try {
+      console.log('Service: Bắt đầu tạo khuyến mãi:', {
+        partnerId,
+        promotionData
+      });
+
+      // 1. Kiểm tra partner tồn tại và có quyền
+      const partner = await userRepository.findById(partnerId);
+      if (!partner) {
+        console.error('❌ Không tìm thấy partner');
+        throw new AppError('Không tìm thấy partner', 404);
+      }
+
+      if (partner.role !== 'partner') {
+        console.error('❌ Không có quyền tạo khuyến mãi');
+        throw new AppError('Không có quyền tạo khuyến mãi', 403);
+      }
+
+      // 2. Kiểm tra phòng tồn tại
+      const room = await roomRepository.findById(promotionData.roomId);
+      if (!room) {
+        console.error('❌ Không tìm thấy phòng');
+        throw new AppError('Không tìm thấy phòng', 404);
+      }
+
+      // 3. Kiểm tra khách sạn tồn tại
+      const hotel = await hotelRepository.findById(room.hotelId);
+      if (!hotel) {
+        console.error('❌ Không tìm thấy khách sạn');
+        throw new AppError('Không tìm thấy khách sạn', 404);
+      }
+
+      // 4. Kiểm tra quyền sở hữu
+      if (!hotel.partner_id.equals(partnerId)) {
+        console.error('❌ Không có quyền tạo khuyến mãi cho phòng này');
+        throw new AppError('Không có quyền tạo khuyến mãi cho phòng này', 403);
+      }
+
+      // 5. Tạo khuyến mãi
+      const promotion = {
+        ...promotionData,
+        hotelId: hotel._id,
+        partnerId: partnerId
+      };
+
+      const newPromotion = await promotionRepository.create(promotion);
+
+      console.log('✅ Service: Tạo khuyến mãi thành công:', {
+        id: newPromotion._id,
+        roomId: newPromotion.roomId
+      });
+
+      return newPromotion;
+
+    } catch (error) {
+      console.error('❌ Service: Lỗi trong createPromotion:', error);
+      throw error instanceof AppError ? error : new AppError('Lỗi khi tạo khuyến mãi', 500);
+    }
+  }
+
+  async getPromotionsByRoom(partnerId, roomId) {
+    try {
+      // 1. Kiểm tra quyền truy cập
+      const room = await roomRepository.findById(roomId);
+      if (!room) {
+        throw new AppError('Không tìm thấy phòng', 404);
+      }
+
+      const hotel = await hotelRepository.findById(room.hotelId);
+      if (!hotel || !hotel.partner_id.equals(partnerId)) {
+        throw new AppError('Không có quyền xem khuyến mãi của phòng này', 403);
+      }
+
+      // 2. Lấy danh sách khuyến mãi
+      return await promotionRepository.findByRoomId(roomId);
+    } catch (error) {
+      throw error instanceof AppError ? error : new AppError('Lỗi khi lấy danh sách khuyến mãi', 500);
+    }
+  }
+
+  async updatePromotion(partnerId, promotionId, updateData) {
+    try {
+      // 1. Kiểm tra khuyến mãi tồn tại
+      const promotion = await promotionRepository.findById(promotionId);
+      if (!promotion) {
+        throw new AppError('Không tìm thấy khuyến mãi', 404);
+      }
+
+      // 2. Kiểm tra quyền sở hữu
+      if (!promotion.partnerId.equals(partnerId)) {
+        throw new AppError('Không có quyền cập nhật khuyến mãi này', 403);
+      }
+
+      // 3. Cập nhật khuyến mãi
+      return await promotionRepository.update(promotionId, updateData);
+    } catch (error) {
+      throw error instanceof AppError ? error : new AppError('Lỗi khi cập nhật khuyến mãi', 500);
+    }
+  }
+
+  async deletePromotion(partnerId, promotionId) {
+    try {
+      // 1. Kiểm tra khuyến mãi tồn tại
+      const promotion = await promotionRepository.findById(promotionId);
+      if (!promotion) {
+        throw new AppError('Không tìm thấy khuyến mãi', 404);
+      }
+
+      // 2. Kiểm tra quyền sở hữu
+      if (!promotion.partnerId.equals(partnerId)) {
+        throw new AppError('Không có quyền xóa khuyến mãi này', 403);
+      }
+
+      // 3. Xóa khuyến mãi
+      await promotionRepository.delete(promotionId);
+      return { success: true, message: 'Xóa khuyến mãi thành công' };
+    } catch (error) {
+      throw error instanceof AppError ? error : new AppError('Lỗi khi xóa khuyến mãi', 500);
     }
   }
 }

@@ -26,7 +26,7 @@ const upload = multer({
  * @desc Upload nhiều ảnh lên Cloudinary
  * @access Private
  */
-router.post('/images', upload.array('images', 5), async (req, res) => {
+router.post('/upload/images', upload.array('images', 5), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({

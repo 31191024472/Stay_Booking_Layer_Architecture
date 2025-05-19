@@ -99,11 +99,30 @@ class RoomRepository {
     }
   }
 
-  async delete(id) {
+  async delete(roomId) {
     try {
-      return await Room.findByIdAndDelete(id);
+      console.log('Repository: Bắt đầu xóa phòng:', roomId);
+
+      const deletedRoom = await Room.findByIdAndDelete(roomId);
+      
+      if (!deletedRoom) {
+        console.error('❌ Repository: Không tìm thấy phòng để xóa');
+        return null;
+      }
+
+      console.log('✅ Repository: Xóa phòng thành công:', {
+        id: deletedRoom._id,
+        hotelId: deletedRoom.hotelId
+      });
+
+      return deletedRoom;
     } catch (error) {
-      throw new Error(`Error deleting room: ${error.message}`);
+      console.error('❌ Repository: Lỗi trong delete:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      throw error;
     }
   }
   async deleteByHotelId(hotelId) {

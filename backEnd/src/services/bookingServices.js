@@ -10,22 +10,16 @@ class BookingService {
       throw new Error('Không thể tạo đặt phòng: ' + error.message);
     }
   }
-
-  async getUserBookings(userId) {
-    try {
-      if (!userId) {
-        throw new Error('UserId không hợp lệ');
-      }
-
-      const bookings = await bookingRepository.getUserBookings(userId);
-      return bookings;
-    } catch (error) {
-      console.error('Get user bookings service error:', error);
-      throw new Error('Không thể lấy danh sách đặt phòng: ' + error.message);
+  // Lấy danh sách đặt phòng của khách sạn
+  async getBookingsByHotel(hotelId) {
+    if (!hotelId) {
+      throw new Error('Thiếu hotelId', 400);
     }
+    const bookings = await bookingRepository.findByHotelId(hotelId);
+  
+    return bookings;
+
   }
-
-
 }
 
 export default new BookingService();

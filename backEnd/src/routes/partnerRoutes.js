@@ -10,6 +10,10 @@ import {
   getHotelDetails,
   getCities,
   
+  // Quản lý đặt phòng
+  getBookingsByHotel,
+
+
   // Quản lý phòng
   getRooms,
   createRoom,
@@ -49,6 +53,9 @@ router.delete('/hotels/:hotelId', deleteHotel);
 router.get('/hotels/:hotelId', getHotelDetails);
 router.get('/cities', getCities)
 
+//Quản lý đặt phòng
+router.get('/hotels/:hotelId/bookings', getBookingsByHotel)
+
 // Quản lý phòng
 router.get('/hotels/:hotelId/rooms', getRooms);
 router.post('/hotels/:hotelId/rooms', createRoom);
@@ -62,6 +69,7 @@ router.post('/discounts', createDiscount);
 router.put('/discounts/:discountId', updateDiscount);
 router.delete('/discounts/:discountId', deleteDiscount);
 router.get('/discounts/:discountId', getDiscountDetails);
+
 
 // Quản lý tài khoản
 router.get('/profile', getProfile);

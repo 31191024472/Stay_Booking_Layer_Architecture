@@ -7,7 +7,10 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    hotelId: { type: String, required: true },
+    hotelId: { 
+      type: String,  // Lưu hotelCode
+      required: true 
+    },
     checkIn: { type: Date, required: true },
     checkOut: { type: Date, required: true },
     guests: { type: Number, required: true },
@@ -17,7 +20,6 @@ const bookingSchema = new mongoose.Schema(
       ref: "Room",
       required: true,
     },
-
     totalPrice: { type: Number, required: true },
     paymentMethodId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,7 +35,7 @@ const bookingSchema = new mongoose.Schema(
     updatedAt: { type: Date, default: Date.now },
   },
   {
-    timestamps: true, // Thêm dòng này!
+    timestamps: true,
   }
 );
 
